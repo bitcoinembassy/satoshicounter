@@ -1,0 +1,33 @@
+<template name="navbar">
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">
+          <img src="bitcoinembassy_logo_square.png" alt="Bitcoin Embassy" style="height: 50px">
+        </a>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="{{isActiveRoute regex='buy'}}"><a href="/buy-bitcoins">Buy bitcoins</a></li>
+          <li class="{{isActiveRoute regex='sell'}}"><a href="/sell-bitcoins">Sell bitcoins</a></li>
+          <!--<li class="{{isActiveRoute regex='how-it-works'}}"><a href="/how-it-works">How it works</a></li>-->
+          <!--<li class="{{isActiveRoute regex='contact-us'}}"><a href="/contact-us">Contact us</a></li>-->
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          {{#if currentUser}}
+            <li><a href="/admin/trades">Trades</a></li>
+            <li><a href="/admin/my-account">My Account</a></li>
+          {{else}}
+            <li><a href="/login">Login</a></li>
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+  </nav>
+</template>
