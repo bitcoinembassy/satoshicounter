@@ -1,15 +1,10 @@
-Prices = new orion.collection('prices', {
+Currencies = new orion.collection('currencies', {
   singularName: 'price',
   tabular: {
     order: [[0, "desc"]],
     columns: [
-      {
-        data: "createdAt",
-        title: "Time",
-        render: function(date) {
-          return moment(date).calendar();
-        }
-      },
+      { data: 'name', title: 'Name' },
+      { data: 'code', title: 'Code' },
       {
         data: "askPrice",
         title: "Ask price",
@@ -42,8 +37,13 @@ Prices = new orion.collection('prices', {
   }
 });
 
-Prices.attachSchema(new SimpleSchema({
-  createdAt: orion.attribute('createdAt'),
+Currencies.attachSchema(new SimpleSchema({
+  name: {
+    type: String
+  },
+  code: {
+    type: String
+  },
   askPrice: {
     type: Number,
     decimal: true

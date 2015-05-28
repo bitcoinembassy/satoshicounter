@@ -86,19 +86,33 @@ Trades.attachSchema(new SimpleSchema({
     },
     autoValue: function() {
       var amountDollars = this.field('amountDollars');
-      var currentPrice = Prices.findOne({}, {sort: {createdAt: -1}});
-      if (currentPrice.bitpay > currentPrice.coinbase) {
-        currentPrice = currentPrice.bitpay;
-      } else {
-        currentPrice = currentPrice.coinbase;
-      }
       var type = this.field('type');
+      var paymentMethod = this.field('paymentMethod');
+
+      var cash = PaymentMethods.findOne({name: 'Cash'});
+      var normalFlatFee = cash.buyPrice.flatFee;
+      if (paymentMethod.value === 'cash') {
+        if (type.value === 'buy') {
+          var flatFee = normalFlatFee;
+        }
+      } else if (paymentMethod.value === 'debit') {
+        var debit = PaymentMethods.findOne({name: 'Debit'});
+        if (type.value === 'buy') {
+          var flatFee = normalFlatFee + debit.buyPrice.flatFee;
+        }
+      } else if (paymentMethod.value === 'credit') {
+        var credit = PaymentMethods.findOne({name: 'Credit'});
+        if (type.value === 'buy') {
+          var flatFee = normalFlatFee + credit.buyPrice.flatFee;
+        }
+      }
+
+      var canadianDollar = Currencies.findOne({code: 'CAD'});
+
       if (type.value === 'buy') {
-        var buyPrice = currentPrice * (1 + orion.dictionary.get('buy.percentageFee') / 100);
-        return (amountDollars.value - orion.dictionary.get('buy.flatFee')) / buyPrice;
-      } else if (type.value === 'sell') {
-        var sellPrice = currentPrice * (1 + orion.dictionary.get('sell.percentageFee') / 100);
-        return (amountDollars.value + orion.dictionary.get('sell.flatFee')) / sellPrice;
+        var tax = flatFee * 0.05 + flatFee * 0.09975;
+        var finalAmountDollars = amountDollars.value - flatFee - tax;
+        return finalAmountDollars / canadianDollar.buyPrice;
       }
     }
   },
@@ -110,13 +124,8 @@ Trades.attachSchema(new SimpleSchema({
     },
     autoValue: function() {
       var amountBitcoins = this.field('amountBitcoins');
-      var currentPrice = Prices.findOne({}, {sort: {createdAt: -1}});
-      if (currentPrice.bitpay > currentPrice.coinbase) {
-        currentPrice = currentPrice.bitpay;
-      } else {
-        currentPrice = currentPrice.coinbase;
-      }
-      return amountBitcoins.value * currentPrice;
+      var canadianDollar = Currencies.findOne({code: 'CAD'});
+      return amountBitcoins.value * canadianDollar.askPrice;
     }
   },
   percentageFee: {
@@ -126,10 +135,9 @@ Trades.attachSchema(new SimpleSchema({
     },
     autoValue: function() {
       var type = this.field('type');
+      var cash = PaymentMethods.findOne({name: 'Cash'});
       if (type.value === 'buy') {
-        return orion.dictionary.get('buy.percentageFee');
-      } else if (type.value === 'sell') {
-        return orion.dictionary.get('sell.percentageFee');
+        return cash.buyPrice.percentageFee;
       }
     }
   },
@@ -141,11 +149,27 @@ Trades.attachSchema(new SimpleSchema({
     },
     autoValue: function() {
       var type = this.field('type');
-      if (type.value === 'buy') {
-        return orion.dictionary.get('buy.flatFee');
-      } else if (type.value === 'sell') {
-        return orion.dictionary.get('sell.flatFee');
+      var paymentMethod = this.field('paymentMethod');
+
+      var cash = PaymentMethods.findOne({name: 'Cash'});
+      var normalFlatFee = cash.buyPrice.flatFee;
+      if (paymentMethod.value === 'cash') {
+        if (type.value === 'buy') {
+          var flatFee = normalFlatFee;
+        }
+      } else if (paymentMethod.value === 'debit') {
+        var debit = PaymentMethods.findOne({name: 'Debit'});
+        if (type.value === 'buy') {
+          var flatFee = normalFlatFee + debit.buyPrice.flatFee;
+        }
+      } else if (paymentMethod.value === 'credit') {
+        var credit = PaymentMethods.findOne({name: 'Credit'});
+        if (type.value === 'buy') {
+          var flatFee = normalFlatFee + credit.buyPrice.flatFee;
+        }
       }
+
+      return flatFee;
     }
   },
   paymentReceived: {

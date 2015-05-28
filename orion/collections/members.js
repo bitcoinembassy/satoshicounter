@@ -21,6 +21,7 @@ Members = new orion.collection('members', {
 });
 
 Members.attachSchema(new SimpleSchema({
+  createdAt: orion.attribute('createdAt'),
   number: {
     type: Number,
     unique: true,
@@ -56,11 +57,13 @@ Members.attachSchema(new SimpleSchema({
     unique: true,
     optional: true
   },
-  createdAt: orion.attribute('createdAt'),
   level: {
     type: Number,
     allowedValues: [1, 2, 3],
-    defaultValue: 1
+    defaultValue: 1,
+    autoform: {
+      type: "select-radio-inline"
+    }
   },
   idType: {
     type: String,

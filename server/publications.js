@@ -1,5 +1,5 @@
-Meteor.publish('currentPrice', function() {
-  return Prices.find({}, {sort: {createdAt: -1}, limit: 1});
+Meteor.publish('currencies', function() {
+  return Currencies.find();
 });
 
 Meteor.publish('paymentMethods', function() {

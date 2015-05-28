@@ -2,6 +2,18 @@ Template.buy.helpers({
   buyPrice: function() {
     return Session.get('buyPrice');
   },
+  cash: function() {
+    return Session.get('paymentMethod') === 'cash' ? "checked" : "";
+  },
+  debit: function() {
+    return Session.get('paymentMethod') === 'debit' ? "checked" : "";
+  },
+  credit: function() {
+    return Session.get('paymentMethod') === 'credit' ? "checked" : "";
+  },
+  flatFee: function() {
+    return Session.get('buyPrice.flatFee');
+  },
   amountDollars: function() {
     return Session.get('amountDollars');
   },
@@ -9,23 +21,72 @@ Template.buy.helpers({
     return Session.get('amountBitcoins');
   },
   placeholderBitcoins: function() {
-    return accounting.toFixed((100 - orion.dictionary.get('buy.flatFee')) / Session.get('buyPrice'), 4);
+    var flatFee = Session.get('buyPrice.flatFee');
+    var tax = flatFee * 0.05 + flatFee * 0.09975;
+    var finalAmountDollars = 100 - flatFee - tax;
+    return accounting.toFixed(finalAmountDollars / Session.get('buyPrice'), 4);
   },
-  marketValue: function() {
-    return Session.get('amountBitcoins') * Session.get('currentPrice');
+  tax: function() {
+    return Session.get('buyPrice.flatFee') * 0.05 + Session.get('buyPrice.flatFee') * 0.09975;
   },
-  flatFee: function() {
-    return Session.get('flatFee');
+  finalAmountDollars: function() {
+    var flatFee = Session.get('buyPrice.flatFee');
+    var tax = flatFee * 0.05 + flatFee * 0.09975;
+    return Session.get('amountDollars') - flatFee - tax;
+  },
+  marketValueCAD: function() {
+    return Session.get('amountBitcoins') * Session.get('CAD.askPrice');
+  },
+  marketValueUSD: function() {
+    return Session.get('amountBitcoins') * Session.get('USD.askPrice');
   }
 });
 
 Template.buy.events({
-  "input #amountDollars": function (event) {
+  "click #cash": function(event) {
+    Session.set('paymentMethod', 'cash');
+    var flatFee = Session.get('cash.buyPrice.flatFee');
+    Session.set('buyPrice.flatFee', flatFee);
+    if ($.isNumeric(Session.get('amountBitcoins'))) {
+      var tax = flatFee * 0.05 + flatFee * 0.09975;
+      var finalAmountDollars = Session.get('amountDollars') - flatFee - tax;
+      var amountBitcoins = finalAmountDollars / Session.get('buyPrice');
+      Session.set('amountBitcoins', accounting.toFixed(amountBitcoins, 4));
+    }
+  },
+  "click #debit": function(event) {
+    Session.set('paymentMethod', 'debit');
+    var debit = PaymentMethods.findOne({name: 'Debit'});
+    var flatFee = Session.get('cash.buyPrice.flatFee') + Session.get('debit.buyPrice.flatFee');
+    Session.set('buyPrice.flatFee', flatFee);
+    if ($.isNumeric(Session.get('amountBitcoins'))) {
+      var tax = flatFee * 0.05 + flatFee * 0.09975;
+      var finalAmountDollars = Session.get('amountDollars') - flatFee - tax;
+      var amountBitcoins = finalAmountDollars / Session.get('buyPrice');
+      Session.set('amountBitcoins', accounting.toFixed(amountBitcoins, 4));
+    }
+  },
+  "click #credit": function(event) {
+    Session.set('paymentMethod', 'credit');
+    var credit = PaymentMethods.findOne({name: 'Credit'});
+    var flatFee = Session.get('cash.buyPrice.flatFee') + Session.get('credit.buyPrice.flatFee');
+    Session.set('buyPrice.flatFee', flatFee);
+    if ($.isNumeric(Session.get('amountBitcoins'))) {
+      var tax = flatFee * 0.05 + flatFee * 0.09975;
+      var finalAmountDollars = Session.get('amountDollars') - flatFee - tax;
+      var amountBitcoins = finalAmountDollars / Session.get('buyPrice');
+      Session.set('amountBitcoins', accounting.toFixed(amountBitcoins, 4));
+    }
+  },
+  "input #amountDollars": function(event) {
     var amountDollars = event.target.value;
     if ($.isNumeric(amountDollars)) {
       Session.set("amountDollars", amountDollars);
-      if (amountDollars > orion.dictionary.get('buy.flatFee')) {
-        var amountBitcoins = (amountDollars - orion.dictionary.get('buy.flatFee')) / Session.get('buyPrice');
+      var flatFee = Session.get('buyPrice.flatFee');
+      var tax = flatFee * 0.05 + flatFee * 0.09975;
+      if (amountDollars > flatFee + tax) {
+        var finalAmountDollars = amountDollars - flatFee - tax;
+        var amountBitcoins = finalAmountDollars / Session.get('buyPrice');
         Session.set("amountBitcoins", accounting.toFixed(amountBitcoins, 4));
       } else {
         Session.set("amountBitcoins", 0);
@@ -35,12 +96,14 @@ Template.buy.events({
       Session.set("amountBitcoins", NaN);
     }
   },
-  "input #amountBitcoins": function (event) {
+  "input #amountBitcoins": function(event) {
     var amountBitcoins = event.target.value;
     if ($.isNumeric(amountBitcoins)) {
       Session.set("amountBitcoins", amountBitcoins);
-      var amountDollars = amountBitcoins * Session.get('buyPrice') + orion.dictionary.get('buy.flatFee');
-      if (amountDollars > orion.dictionary.get('buy.flatFee')) {
+      var flatFee = Session.get('buyPrice.flatFee');
+      var tax = flatFee * 0.05 + flatFee * 0.09975;
+      var amountDollars = amountBitcoins * Session.get('buyPrice') + flatFee + tax;
+      if (amountDollars > flatFee + tax) {
         Session.set("amountDollars", accounting.toFixed(amountDollars, 2));
       } else {
         Session.set("amountDollars", 0);
@@ -50,21 +113,16 @@ Template.buy.events({
       Session.set("amountDollars", NaN);
     }
   },
-  "click input": function (event) {
+  "click input": function(event) {
     $(event.target).select();
   },
-  "submit .new-trade": function (event) {
+  "submit .new-trade": function(event) {
     event.preventDefault();
     Trades.insert({
-      client: Meteor.userId(),
+      member: 1001,
       type: 'buy',
-      price: Session.get('buyPrice'),
-      amount: Session.get('buyAmountCAD'),
-      total: Session.get('buyAmountBTC'),
-      status: 'open',
-      address: Meteor.user().profile.address,
-      coinbase_cad: Session.get('coinbase_price'),
-      fee: orion.dictionary.get('buy.fee')
+      paymentMethod: Session.get('paymentMethod'),
+      amountDollars: Session.get('amountDollars')
     });
     Router.go('/');
   }

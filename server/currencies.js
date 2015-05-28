@@ -18,12 +18,10 @@ Meteor.setInterval(function() {
   var buyPrice = askPrice * (1 + cash.buyPrice.percentageFee / 100);
   var sellPrice = bidPrice * (1 - cash.sellPrice.percentageFee / 100);
 
-  Prices.insert({
-    askPrice: askPrice,
-    bidPrice: bidPrice,
-    buyPrice: buyPrice,
-    sellPrice: sellPrice
-  });
-
-  Prices.remove({createdAt: {$lt: moment().subtract(1, 'days').toDate()}});
+  Currencies.update(
+    {name: 'Canadian dollar', code: 'CAD'},
+    {$set:
+      {askPrice: askPrice, bidPrice: bidPrice, buyPrice: buyPrice, sellPrice: sellPrice}
+    }
+  );
 }, 60000);

@@ -9,3 +9,7 @@ Template.registerHelper('formatBTC', function(price) {
 Template.registerHelper('formatCAD', function(price) {
   return accounting.formatMoney(price, { symbol: "CAD",  format: "%v %s" });
 });
+
+Template.registerHelper('formatUSD', function(price) {
+  return accounting.formatMoney(price, { symbol: "USD",  format: "%v %s" });
+});

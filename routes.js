@@ -4,7 +4,7 @@ var getAfterAction = function(title) {
 			return;
 		}
 		SEO.set({
-			title: title ? title + ' - ' + orion.dictionary.get('company.name') : orion.dictionary.get('company.name')
+			title: title ? title + ' - Satoshi Square' : 'Satoshi Square'
 		});
 	}
 }

@@ -9,9 +9,10 @@
         <tr>
           <th>Date</th>
           <th>Type</th>
-          <th>Price</th>
+          <th>Payment method</th>
           <th>Amount</th>
-          <th>Total</th>
+          <th>Amount</th>
+          <th>Market value</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -20,9 +21,10 @@
       <tr>
         <td>{{createdAt}}</td>
         <td>{{type}}</td>
-        <td>{{price}}</td>
-        <td>{{amount}}</td>
-        <td>{{total}}</td>
+        <td>{{paymentMethod}}</td>
+        <td>{{formatDollarSign amountDollars}}</td>
+        <td>{{formatBTC amountBitcoins}}</td>
+        <td>{{formatDollarSign marketValue}}</td>
         <td>{{status}}</td>
       </tr>
       {{/each}}
