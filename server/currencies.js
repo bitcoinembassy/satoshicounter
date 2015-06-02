@@ -13,10 +13,8 @@ Meteor.setInterval(function() {
     var bidPrice = coinbasePrice;
   }
 
-  var cash = PaymentMethods.findOne({name: 'Cash'});
-
-  var buyPrice = askPrice * (1 + cash.buyPrice.percentageFee / 100);
-  var sellPrice = bidPrice * (1 - cash.sellPrice.percentageFee / 100);
+  var buyPrice = askPrice * (1 + orion.dictionary.get('price.percentageOverAskPrice', 5) / 100);
+  var sellPrice = bidPrice * (1 - orion.dictionary.get('price.percentageBelowBidPrice', 5) / 100);
 
   Currencies.update(
     {name: 'Canadian dollar', code: 'CAD'},

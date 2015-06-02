@@ -6,35 +6,35 @@ Meteor.startup(function() {
   if (PaymentMethods.find().count() === 0) {
     PaymentMethods.insert({
       name: 'Cash',
-      buyPrice: {
+      buy: {
         percentageFee: 7,
         flatFee: 5
       },
-      sellPrice: {
+      sell: {
         percentageFee: 4,
         flatFee: 5
       }
     });
 
     PaymentMethods.insert({
-      name: 'Debit',
-      buyPrice: {
+      name: 'Debit card',
+      buy: {
         percentageFee: 1,
         flatFee: 1
       },
-      sellPrice: {
+      sell: {
         percentageFee: 1,
         flatFee: 1
       }
     });
 
     PaymentMethods.insert({
-      name: 'Credit',
-      buyPrice: {
+      name: 'Credit card',
+      buy: {
         percentageFee: 2.75,
         flatFee: 2
       },
-      sellPrice: {
+      sell: {
         percentageFee: 2.75,
         flatFee: 2
       }
@@ -58,16 +58,20 @@ Meteor.startup(function() {
 
     var cash = PaymentMethods.findOne({name: 'Cash'});
 
-    var buyPrice = askPrice * (1 + cash.buyPrice.percentageFee / 100);
-    var sellPrice = bidPrice * (1 - cash.sellPrice.percentageFee / 100);
+    var buyPrice = askPrice * (1 + cash.buy.percentageFee / 100);
+    var sellPrice = bidPrice * (1 - cash.sell.percentageFee / 100);
 
     Currencies.insert({
       name: 'Canadian dollar',
       code: 'CAD',
-      askPrice: askPrice,
-      bidPrice: bidPrice,
-      buyPrice: buyPrice,
-      sellPrice: sellPrice
+      buy: {
+        askPrice: askPrice,
+        companyPrice: buyPrice
+      },
+      sell: {
+        bidPrice: bidPrice,
+        companyPrice: sellPrice
+      }
     });
   }
 
@@ -86,18 +90,20 @@ Meteor.startup(function() {
       var bidPrice = coinbasePrice;
     }
 
-    var cash = PaymentMethods.findOne({name: 'Cash'});
-
-    var buyPrice = askPrice * (1 + cash.buyPrice.percentageFee / 100);
-    var sellPrice = bidPrice * (1 - cash.sellPrice.percentageFee / 100);
+    var buyPrice = askPrice * (1 + orion.dictionary.get('price.percentageOverAskPrice') / 100);
+    var sellPrice = bidPrice * (1 - orion.dictionary.get('price.percentageBelowBidPrice') / 100);
 
     Currencies.insert({
       name: 'United States dollar',
       code: 'USD',
-      askPrice: askPrice,
-      bidPrice: bidPrice,
-      buyPrice: buyPrice,
-      sellPrice: sellPrice
+      buy: {
+        askPrice: askPrice,
+        companyPrice: buyPrice
+      },
+      sell: {
+        bidPrice: bidPrice,
+        companyPrice: sellPrice
+      }
     });
   }
 });

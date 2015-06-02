@@ -8,29 +8,29 @@ PaymentMethods = new orion.collection('payment-methods', {
     columns: [
       { data: 'name', title: 'Name' },
       {
-        data: 'buyPrice.percentageFee',
-        title: 'Buy percentage',
+        data: 'buy.percentageFee',
+        title: 'Buy | Percentage fee',
         render: function(val, type, doc) {
           return val + '%';
         }
       },
       {
-        data: 'buyPrice.flatFee',
-        title: 'Buy fee',
+        data: 'buy.flatFee',
+        title: 'Buy | Flat fee',
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
       },
       {
-        data: 'sellPrice.percentageFee',
-        title: 'Sell percentage',
+        data: 'sell.percentageFee',
+        title: 'Sell | Percentage fee',
         render: function(val, type, doc) {
           return val + '%';
         }
       },
       {
-        data: 'sellPrice.flatFee',
-        title: 'Sell fee',
+        data: 'sell.flatFee',
+        title: 'Sell | Flat fee',
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
@@ -43,24 +43,24 @@ PaymentMethods.attachSchema(new SimpleSchema({
   name: {
     type: String
   },
-  buyPrice: {
+  buy: {
     type: Object
   },
-  "buyPrice.percentageFee": {
+  "buy.percentageFee": {
     type: Number,
     decimal: true
   },
-  "buyPrice.flatFee": {
+  "buy.flatFee": {
     type: Number
   },
-  sellPrice: {
+  sell: {
     type: Object
   },
-  "sellPrice.percentageFee": {
+  "sell.percentageFee": {
     type: Number,
     decimal: true
   },
-  "sellPrice.flatFee": {
+  "sell.flatFee": {
     type: Number
   }
 }));

@@ -1,5 +1,5 @@
 Currencies = new orion.collection('currencies', {
-  singularName: 'price',
+  singularName: 'currency',
   tabular: {
     order: [[0, "desc"]],
     columns: [
@@ -7,28 +7,28 @@ Currencies = new orion.collection('currencies', {
       { data: 'code', title: 'Code' },
       {
         data: "askPrice",
-        title: "Ask price",
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      },
-      {
-        data: "bidPrice",
-        title: "Bid price",
+        title: "Buy | Market price",
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
       },
       {
         data: "buyPrice",
-        title: "Buy price",
+        title: "Buy | Company price",
+        render: function(val, type, doc) {
+          return accounting.formatMoney(val);
+        }
+      },
+      {
+        data: "bidPrice",
+        title: "Sell | Market price",
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
       },
       {
         data: "sellPrice",
-        title: "Sell price",
+        title: "Sell | Company price",
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
@@ -44,19 +44,25 @@ Currencies.attachSchema(new SimpleSchema({
   code: {
     type: String
   },
-  askPrice: {
+  buy: {
+    type: Object
+  },
+  "buy.marketPrice": {
     type: Number,
     decimal: true
   },
-  bidPrice: {
+  "buy.companyPrice": {
     type: Number,
     decimal: true
   },
-  buyPrice: {
+  sell: {
+    type: Object
+  },
+  "sell.marketPrice": {
     type: Number,
     decimal: true
   },
-  sellPrice: {
+  "sell.companyPrice": {
     type: Number,
     decimal: true
   }

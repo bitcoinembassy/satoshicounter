@@ -3,8 +3,9 @@ var getAfterAction = function(title) {
 		if (!Meteor.isClient) {
 			return;
 		}
+		var companyName = orion.dictionary.get('company.name', 'Satoshi Square');
 		SEO.set({
-			title: title ? title + ' - Satoshi Square' : 'Satoshi Square'
+			title: title ? title + ' - Satoshi Square' : companyName
 		});
 	}
 }

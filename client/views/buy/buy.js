@@ -1,33 +1,33 @@
 Template.buy.helpers({
-  buyPrice: function() {
-    return Session.get('buyPrice');
-  },
-  cash: function() {
-    return Session.get('paymentMethod') === 'cash' ? "checked" : "";
-  },
-  debit: function() {
-    return Session.get('paymentMethod') === 'debit' ? "checked" : "";
-  },
-  credit: function() {
-    return Session.get('paymentMethod') === 'credit' ? "checked" : "";
-  },
-  flatFee: function() {
-    return Session.get('buyPrice.flatFee');
+  companyPrice: function() {
+    return Session.get('buy.companyPrice');
   },
   amountDollars: function() {
-    return Session.get('amountDollars');
+    return Session.get('buy.amountDollars');
   },
   amountBitcoins: function() {
-    return Session.get('amountBitcoins');
+    return Session.get('buy.amountBitcoins');
   },
-  placeholderBitcoins: function() {
-    var flatFee = Session.get('buyPrice.flatFee');
-    var tax = flatFee * 0.05 + flatFee * 0.09975;
-    var finalAmountDollars = 100 - flatFee - tax;
-    return accounting.toFixed(finalAmountDollars / Session.get('buyPrice'), 4);
+  cash: function() {
+    if (Session.get('buy.paymentMethod') === 'cash') {
+      return "checked";
+    }
+  },
+  debit: function() {
+    if (Session.get('buy.paymentMethod') === 'debit') {
+      return "checked";
+    }
+  },
+  credit: function() {
+    if (Session.get('buy.paymentMethod') === 'credit') {
+      return "checked";
+    }
+  },
+  flatFee: function() {
+    return Session.get('buy.flatFee');
   },
   tax: function() {
-    return Session.get('buyPrice.flatFee') * 0.05 + Session.get('buyPrice.flatFee') * 0.09975;
+    return Session.get('buy.flatFee') * 0.05 + Session.get('buy.flatFee') * 0.09975;
   },
   finalAmountDollars: function() {
     var flatFee = Session.get('buyPrice.flatFee');
@@ -121,7 +121,7 @@ Template.buy.events({
     Trades.insert({
       member: 1001,
       type: 'buy',
-      paymentMethod: Session.get('paymentMethod'),
+      paymentMethod: Session.get('buy.paymentMethod'),
       amountDollars: Session.get('amountDollars')
     });
     Router.go('/');
