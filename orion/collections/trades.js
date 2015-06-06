@@ -13,14 +13,14 @@ Trades = new orion.collection('trades', {
       orion.attributeColumn('hasOne', 'member', 'Member'),
       { data: 'type', title: 'Type' },
       {
-        data: 'amountDollars',
+        data: 'dollarAmount',
         title: 'Amount',
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
       },
       {
-        data: 'amountBitcoins',
+        data: 'bitcoinAmount',
         title: 'Amount',
           render: function(val, type, doc) {
             return accounting.formatMoney(val, { symbol: "BTC", precision: 4, format: "%v %s" });
@@ -42,7 +42,7 @@ Trades = new orion.collection('trades', {
 Trades.attachSchema(new SimpleSchema({
   createdAt: orion.attribute('createdAt'),
   member: orion.attribute('hasOne', {
-    label: 'Member'
+    label: 'Member number'
   }, {
     collection: Members,
     titleField: 'number',
@@ -73,19 +73,19 @@ Trades.attachSchema(new SimpleSchema({
     },
     defaultValue: 'cash'
   },
-  amountDollars: {
+  dollarAmount: {
     type: Number,
     decimal: true,
     label: "Amount of dollars"
   },
-  amountBitcoins: {
+  bitcoinAmount: {
     type: Number,
     decimal: true,
     autoform: {
       omit: true
     },
     autoValue: function() {
-      var amountDollars = this.field('amountDollars');
+      var dollarAmount = this.field('dollarAmount');
       var type = this.field('type');
       var paymentMethod = this.field('paymentMethod');
 
@@ -111,7 +111,7 @@ Trades.attachSchema(new SimpleSchema({
 
       if (type.value === 'buy') {
         var tax = flatFee * 0.05 + flatFee * 0.09975;
-        var finalAmountDollars = amountDollars.value - flatFee - tax;
+        var finalAmountDollars = dollarAmount.value - flatFee - tax;
         return finalAmountDollars / canadianDollar.buyPrice;
       }
     }
@@ -123,9 +123,9 @@ Trades.attachSchema(new SimpleSchema({
       omit: true
     },
     autoValue: function() {
-      var amountBitcoins = this.field('amountBitcoins');
+      var bitcoinAmount = this.field('bitcoinAmount');
       var canadianDollar = Currencies.findOne({code: 'CAD'});
-      return amountBitcoins.value * canadianDollar.askPrice;
+      return bitcoinAmount.value * canadianDollar.askPrice;
     }
   },
   percentageFee: {

@@ -4,35 +4,7 @@ Currencies = new orion.collection('currencies', {
     order: [[0, "desc"]],
     columns: [
       { data: 'name', title: 'Name' },
-      { data: 'code', title: 'Code' },
-      {
-        data: "askPrice",
-        title: "Buy | Market price",
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      },
-      {
-        data: "buyPrice",
-        title: "Buy | Company price",
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      },
-      {
-        data: "bidPrice",
-        title: "Sell | Market price",
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      },
-      {
-        data: "sellPrice",
-        title: "Sell | Company price",
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      }
+      { data: 'code', title: 'Code' }
     ]
   }
 });
@@ -42,27 +14,26 @@ Currencies.attachSchema(new SimpleSchema({
     type: String
   },
   code: {
+    type: String,
+    allowedValues: ['BTC', 'CAD', 'USD'],
+    unique: true,
+    denyUpdate: true
+  },
+  exchangeRates: {
+    type: [Object]
+  },
+  'exchangeRates.$.currencyCode': {
+    type: String,
+    allowedValues: ['BTC', 'CAD', 'USD']
+  },
+  'exchangeRates.$.value': {
     type: String
   },
-  buy: {
-    type: Object
-  },
-  "buy.marketPrice": {
+  'exchangeRates.$.percentageFee': {
     type: Number,
     decimal: true
   },
-  "buy.companyPrice": {
-    type: Number,
-    decimal: true
-  },
-  sell: {
-    type: Object
-  },
-  "sell.marketPrice": {
-    type: Number,
-    decimal: true
-  },
-  "sell.companyPrice": {
+  'exchangeRates.$.flatFee': {
     type: Number,
     decimal: true
   }

@@ -1,0 +1,94 @@
+<template name="buyBitcoins">
+  <!-- {{#autoForm collection="Trades" id="insertTradeForm" type="insert"}}
+    <div class="form-group {{#if afFieldIsInvalid name='dollarAmount'}}has-error{{/if}}">
+      <label class="control-label">{{afFieldLabelText name='dollarAmount'}}</label>
+      {{> afFieldInput name='dollarAmount'}}
+      {{#if afFieldIsInvalid name='dollarAmount'}}
+      <span class="help-block">{{{afFieldMessage name='dollarAmount'}}}</span>
+      {{/if}}
+    </div>
+    <div class="form-group {{#if afFieldIsInvalid name='bitcoinAmount'}}has-error{{/if}}">
+      <label class="control-label">{{afFieldLabelText name='bitcoinAmount'}}</label>
+      {{> afFieldInput name='bitcoinAmount'}}
+      {{#if afFieldIsInvalid name='bitcoinAmount'}}
+      <span class="help-block">{{{afFieldMessage name='bitcoinAmount'}}}</span>
+      {{/if}}
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Add Trade</button>
+      <button type="reset" class="btn btn-default">Reset Form</button>
+    </div>
+  {{/autoForm}} -->
+  <h1 class="text-center" style="font-size: 10vw; margin-top: 0">
+    <strong>{{formatDollarSign companyPrice}}</strong>
+  </h1>
+  <div class="row">
+    <div class="col-sm-10 col-sm-offset-1">
+      <div class="progress" style="height: 5px">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageLeft}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentageLeft}}%;">
+          <span class="sr-only">{{percentageLeft}}% Complete</span>
+        </div>
+      </div>
+      <form class="new-trade" style="margin-bottom: 50px">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="input-group input-group-lg" style="padding-top: 10px; padding-bottom: 10px">
+              <input type="number" step="0.01" min="{{flatFee}}" class="form-control text-right" id="dollarAmount" value="{{dollarAmount}}" placeholder="Dollar amount" autofocus>
+              <span class="input-group-addon">CAD</span>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group input-group-lg" style="padding-top: 10px; padding-bottom: 10px">
+              <input type="number" step="0.0001" min="0" class="form-control text-right" id="bitcoinAmount" value="{{bitcoinAmount}}" placeholder="Bitcoin amount">
+              <span class="input-group-addon">BTC</span>
+            </div>
+          </div>
+        </div>
+        {{#if bitcoinAmount}}
+          <hr>
+          <h3 class="text-center text-muted">
+            There is a <strong>{{formatDollarSign flatFee}} fee</strong> per trade
+          </h3>
+          <hr>
+          {{#if Template.subscriptionsReady}}
+            <div class="text-center">
+              <h3>Payment method</h3>
+              <label class="radio-inline">
+                <input type="radio" name="paymentMethods" id="cash" value="cash" {{cash}}> Cash
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="paymentMethods" id="debitCard" value="debitCard" {{debitCard}}> Debit card
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="paymentMethods" id="creditCard" value="creditCard" {{creditCard}}> Credit card
+              </label>
+            </div>
+          {{/if}}
+          <hr>
+          <h3 class="text-center">
+            {{formatDollarSign dollarAmount}}
+            − {{formatDollarSign flatFee}} fee
+            {{#if paymentMethodFee}}
+            − {{formatDollarSign paymentMethodFee}} <strong>{{paymentMethod}}</strong> fee
+            {{/if}}
+            - {{formatDollarSign tax}} tax =
+            <strong>{{formatDollarSign finalAmountDollars}}</strong>
+          </h3>
+          <hr>
+          <h3 class="text-center">
+            {{formatDollarSign finalAmountDollars}} &divide; {{formatDollarSign companyPrice}} =
+            <strong>{{formatBTC bitcoinAmount}}</strong>
+          </h3>
+          <hr>
+          <h2 class="text-center">
+            {{formatBTC bitcoinAmount}} ≈ <strong>{{formatCAD marketValue}}</strong>
+          </h2>
+          <hr>
+          {{#if currentUser}}
+            <input class="btn btn-primary btn-lg btn-block" type="submit" value="Submit trade">
+          {{/if}}
+        {{/if}}
+      </form>
+    </div>
+  </div>
+</template>

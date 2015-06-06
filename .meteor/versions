@@ -30,10 +30,10 @@ iron:controller@1.0.8
 iron:core@1.0.8
 iron:dynamic-template@1.0.8
 iron:layout@1.0.8
-iron:location@1.0.8
-iron:middleware-stack@1.0.8
-iron:router@1.0.8
-iron:url@1.0.8
+iron:location@1.0.9
+iron:middleware-stack@1.0.9
+iron:router@1.0.9
+iron:url@1.0.9
 jeremy:selectize@0.12.1_3
 jquery@1.11.3_2
 json@1.0.3
@@ -61,7 +61,7 @@ observe-sequence@1.0.6
 ordered-dict@1.0.3
 orionjs:accounts@1.1.0
 orionjs:attributes@1.1.0
-orionjs:base@1.1.1
+orionjs:base@1.1.2
 orionjs:bootstrap@1.1.1
 orionjs:collections@1.1.0
 orionjs:config@1.1.0
@@ -69,7 +69,7 @@ orionjs:core@1.1.0
 orionjs:dictionary@1.1.0
 orionjs:lang-en@1.1.0
 orionjs:relationships@1.1.0
-osv:mongo-counter@0.2.0
+osv:mongo-counter@0.2.1
 random@1.0.3
 reactive-dict@1.1.0
 reactive-var@1.0.5

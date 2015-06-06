@@ -3,9 +3,9 @@ var getAfterAction = function(title) {
 		if (!Meteor.isClient) {
 			return;
 		}
-		var companyName = orion.dictionary.get('company.name', 'Satoshi Square');
+		var companyName = orion.dictionary.get('company.name', 'Satoshi Counter');
 		SEO.set({
-			title: title ? title + ' - Satoshi Square' : companyName
+			title: title ? title + ' - Satoshi Counter' : companyName
 		});
 	}
 }
@@ -19,14 +19,33 @@ Router.route('/', {
   onAfterAction: getAfterAction()
 });
 
-Router.route('/buy-bitcoins', {
+Router.route('/buy', {
   name: 'buy',
   onAfterAction: getAfterAction('Buy bitcoins')
 });
 
-Router.route('/sell-bitcoins', {
+Router.route('/sell', {
   name: 'sell',
   onAfterAction: getAfterAction('Sell bitcoins')
+});
+
+
+Router.route('/buy-bitcoins', {
+  name: 'buy.bitcoins',
+	template: 'bitcoins',
+  onAfterAction: getAfterAction('Buy bitcoins')
+});
+
+Router.route('/buy-canadian-dollars', {
+  name: 'buy.canadianDollars',
+	template: 'canadianDollars',
+  onAfterAction: getAfterAction('Buy Canadian dollars')
+});
+
+Router.route('/buy-us-dollars', {
+  name: 'buy.usDollars',
+	template: 'usDollars',
+  onAfterAction: getAfterAction('Buy US dollars')
 });
 
 Router.onAfterAction(

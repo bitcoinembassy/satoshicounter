@@ -2,20 +2,6 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
-.navbar-static-top .nav {
-  padding: 10px 0;
-}
-
-.navbar-static-top .navbar-brand {
-  padding: 0 15px;
-}
-
-@media(min-width:768px) {
-  .navbar-static-top .navbar-brand {
-    padding: 10px;
-  }
-}
-
 .input-group-lg>.form-control, .input-group-lg>.input-group-addon, .input-group-lg>.input-group-btn>.btn {
   height: 69px;
   font-size: 35px;
