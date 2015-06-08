@@ -1,20 +1,15 @@
 var cad = Meteor.setInterval(function() {
   ['BTC', 'USD'].forEach(function(currency) {
-    var coinbaseRate = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['cad_to_' + currency.toLowerCase()];
+    var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['cad_to_' + currency.toLowerCase()];
 
-    Currencies.update(
+    ExchangeRates.update(
       {
-        code: 'CAD',
-        exchangeRates: {
-          currencyCode: currency
-        }
+        fromCurrency: currency,
+        toCurrency: 'CAD'
       },
       {
         $set: {
-          'exchangeRates.$': {
-            currencyCode: currency,
-            value: coinbaseRate
-          }
+          value: value
         },
       }
     );

@@ -8,11 +8,10 @@
       <thead>
         <tr>
           <th>Date</th>
-          <th>Type</th>
-          <th>Payment method</th>
-          <th>Amount</th>
-          <th>Amount</th>
+          <th>From (amount)</th>
+          <th>To (amount)</th>
           <th>Market value</th>
+          <th>Member payment method</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -20,11 +19,10 @@
       {{#each trades}}
       <tr>
         <td>{{createdAt}}</td>
-        <td>{{type}}</td>
-        <td>{{paymentMethod}}</td>
-        <td>{{formatDollarSign dollarAmount}}</td>
-        <td>{{formatBTC bitcoinAmount}}</td>
+        <td>{{formatDollarSign fromAmount}}</td>
+        <td>{{formatBTC toAmount}}</td>
         <td>{{formatDollarSign marketValue}}</td>
+        <td>{{memberPaymentMethod}}</td>
         <td>{{status}}</td>
       </tr>
       {{/each}}

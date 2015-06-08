@@ -1,18 +1,31 @@
-// var paymentMethods = Meteor.subscribe('paymentMethods');
-//
-// Tracker.autorun(function () {
-//   if (paymentMethods.ready()) {
-//     var cash = PaymentMethods.findOne({name: 'Cash'});
-//     Session.set('cash.buy.flatFee', cash.buy.flatFee);
-//
-//     var debit = PaymentMethods.findOne({name: 'Debit card'});
-//     Session.set('debit.buy.flatFee', debit.buy.flatFee);
-//
-//     var credit = PaymentMethods.findOne({name: 'Credit card'});
-//     Session.set('credit.buy.flatFee', credit.buy.flatFee);
-//
-//     Session.set('buy.percentageFee', 1.07);
-//     Session.set('buy.flatFee', cash.buy.flatFee);
-//     Session.set('buy.btc.paymentMethod', 'cash');
-//   }
-// });
+Session.setDefault('buy.btc.paymentMethod', 'Cash');
+
+var currencies = Meteor.subscribe('currencies');
+
+var exchangeRates = Meteor.subscribe('exchangeRates');
+
+Tracker.autorun(function() {
+  if (exchangeRates.ready()) {
+    var exchangeRate = ExchangeRates.findOne({fromCurrency: 'CAD', toCurrency: 'BTC'});
+
+    var marketPrice = exchangeRate.value;
+    Session.set('buy.marketPrice', marketPrice);
+
+    var companyPrice = marketPrice * (1 + exchangeRate.percentageFee / 100);
+    Session.set('buy.companyPrice', companyPrice);
+
+    Session.set('buy.flatFee', exchangeRate.flatFee);
+  }
+});
+
+var paymentMethods = Meteor.subscribe('paymentMethods');
+
+Tracker.autorun(function() {
+  if (paymentMethods.ready()) {
+    var paymentMethod = PaymentMethods.findOne({name: Session.get('buy.btc.paymentMethod')});
+    var percentageFee = Session.get('buy.fromAmount') * (paymentMethod.percentageFee / 100);
+    Session.set('buy.paymentMethodFee', percentageFee + paymentMethod.flatFee);
+  }
+});
+
+AutoForm.debug();

@@ -11,29 +11,27 @@ Trades = new orion.collection('trades', {
         }
       },
       orion.attributeColumn('hasOne', 'member', 'Member'),
-      { data: 'type', title: 'Type' },
       {
-        data: 'dollarAmount',
-        title: 'Amount',
+        data: 'fromAmount',
+        title: 'From (amount)',
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
       },
       {
-        data: 'bitcoinAmount',
-        title: 'Amount',
+        data: 'toAmount',
+        title: 'To (amount)',
           render: function(val, type, doc) {
             return accounting.formatMoney(val, { symbol: "BTC", precision: 4, format: "%v %s" });
         }
       },
       {
         data: 'marketValue',
-        title: 'Value',
+        title: 'Market value',
         render: function(val, type, doc) {
           return accounting.formatMoney(val);
         }
       },
-      { data: 'paymentMethod', title: 'Method' },
       { data: 'status', title: 'Status' }
     ]
   }
@@ -46,160 +44,153 @@ Trades.attachSchema(new SimpleSchema({
   }, {
     collection: Members,
     titleField: 'number',
-    publicationName: 'members'
+    publicationName: 'memberNumbers'
   }),
-  type: {
+  fromAmount: {
+    type: Number,
+    label: 'From (amount)',
+    min: 5,
+    decimal: true
+  },
+  fromCurrency: {
     type: String,
-    allowedValues: ['buy', 'sell'],
+    label: 'From (currency)',
+    allowedValues: ['BTC', 'CAD', 'USD'],
+    defaultValue: 'CAD'
+  },
+  toCurrency: {
+    type: String,
+    label: 'To (currency)',
+    allowedValues: ['BTC', 'CAD', 'USD'],
+    defaultValue: 'BTC'
+  },
+  memberPaymentReceived: {
+    type: String,
+    label: 'Member payment received',
+    allowedValues: ['yes', 'no'],
     autoform: {
-      type: 'select-radio-inline',
+      type: "select-radio-inline",
       options: {
-        buy: "Buy",
-        sell: "Sell"
+        yes: "Yes",
+        no: "No"
       }
     },
-    defaultValue: 'buy'
+    defaultValue: 'no'
   },
-  paymentMethod: {
+  memberPaymentMethod: {
     type: String,
-    allowedValues: ['cash', 'debit', 'credit'],
+    allowedValues: ['Cash', 'Debit card', 'Credit card'],
     autoform: {
-      type: 'select-radio-inline',
-      options: {
-        cash: "Cash",
-        debit: "Debit",
-        credit: "Credit"
-      }
+      type: 'select-radio',
+      template: 'buttonGroup',
+      label: false,
+      // options: function() {
+      //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
+      //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
+      //     return {label: obj.name, value: obj.name};
+      //   });
+      // }
+      // options: {
+      //   yes: "Yes",
+      //   no: "No"
+      // }
     },
-    defaultValue: 'cash'
+    defaultValue: 'Cash'
   },
-  dollarAmount: {
+  toAmount: {
     type: Number,
-    decimal: true,
-    label: "Amount of dollars"
-  },
-  bitcoinAmount: {
-    type: Number,
+    label: 'To (amount)',
+    optional: true,
+    min: 0,
     decimal: true,
     autoform: {
       omit: true
     },
     autoValue: function() {
-      var dollarAmount = this.field('dollarAmount');
-      var type = this.field('type');
-      var paymentMethod = this.field('paymentMethod');
+      var fromAmount = this.field('fromAmount');
+      var fromCurrency = this.field('fromCurrency');
+      var toCurrency = this.field('toCurrency');
+      var memberPaymentMethod = this.field('memberPaymentMethod');
 
-      var cash = PaymentMethods.findOne({name: 'Cash'});
-      var normalFlatFee = cash.buyPrice.flatFee;
-      if (paymentMethod.value === 'cash') {
-        if (type.value === 'buy') {
-          var flatFee = normalFlatFee;
-        }
-      } else if (paymentMethod.value === 'debit') {
-        var debit = PaymentMethods.findOne({name: 'Debit'});
-        if (type.value === 'buy') {
-          var flatFee = normalFlatFee + debit.buyPrice.flatFee;
-        }
-      } else if (paymentMethod.value === 'credit') {
-        var credit = PaymentMethods.findOne({name: 'Credit'});
-        if (type.value === 'buy') {
-          var flatFee = normalFlatFee + credit.buyPrice.flatFee;
-        }
-      }
+      if (Meteor.isServer) {
+        var paymentMethod = PaymentMethods.findOne({name: memberPaymentMethod.value});
+        var paymentMethodFees = fromAmount.value * (paymentMethod.percentageFee / 100) + paymentMethod.flatFee;
 
-      var canadianDollar = Currencies.findOne({code: 'CAD'});
+        var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency.value, toCurrency: toCurrency.value});
+        var fees = paymentMethodFees + exchangeRate.flatFee;
+        var tax = fees * 0.05 + fees * 0.09975;
 
-      if (type.value === 'buy') {
-        var tax = flatFee * 0.05 + flatFee * 0.09975;
-        var finalAmountDollars = dollarAmount.value - flatFee - tax;
-        return finalAmountDollars / canadianDollar.buyPrice;
+        var companyPrice = exchangeRate.value * (1 + exchangeRate.percentageFee / 100);
+
+        return (fromAmount.value - fees - tax) / companyPrice;
       }
     }
+  },
+  companyPaymentSent: {
+    type: String,
+    label: 'Company payment sent',
+    allowedValues: ['yes', 'no'],
+    autoform: {
+      type: "select-radio-inline",
+      options: {
+        yes: "Yes",
+        no: "No"
+      }
+    },
+    defaultValue: 'no'
+  },
+  companyPaymentMethod: {
+    type: String,
+    allowedValues: ['Bitcoin address'],
+    autoform: {
+      type: 'select-radio',
+      template: 'buttonGroup',
+      label: false
+      // label: false,
+      // options: function() {
+      //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
+      //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
+      //     return {label: obj.name, value: obj.name};
+      //   });
+      // }
+      // options: {
+      //   yes: "Yes",
+      //   no: "No"
+      // }
+    },
+    defaultValue: 'Bitcoin address'
   },
   marketValue: {
     type: Number,
+    optional: true,
+    min: 0,
     decimal: true,
     autoform: {
       omit: true
     },
     autoValue: function() {
-      var bitcoinAmount = this.field('bitcoinAmount');
-      var canadianDollar = Currencies.findOne({code: 'CAD'});
-      return bitcoinAmount.value * canadianDollar.askPrice;
-    }
-  },
-  percentageFee: {
-    type: Number,
-    autoform: {
-      omit: true
-    },
-    autoValue: function() {
-      var type = this.field('type');
-      var cash = PaymentMethods.findOne({name: 'Cash'});
-      if (type.value === 'buy') {
-        return cash.buyPrice.percentageFee;
-      }
-    }
-  },
-  flatFee: {
-    type: Number,
-    decimal: true,
-    autoform: {
-      omit: true
-    },
-    autoValue: function() {
-      var type = this.field('type');
-      var paymentMethod = this.field('paymentMethod');
+      var fromCurrency = this.field('fromCurrency');
+      var toCurrency = this.field('toCurrency');
+      var toAmount = this.field('toAmount');
 
-      var cash = PaymentMethods.findOne({name: 'Cash'});
-      var normalFlatFee = cash.buyPrice.flatFee;
-      if (paymentMethod.value === 'cash') {
-        if (type.value === 'buy') {
-          var flatFee = normalFlatFee;
-        }
-      } else if (paymentMethod.value === 'debit') {
-        var debit = PaymentMethods.findOne({name: 'Debit'});
-        if (type.value === 'buy') {
-          var flatFee = normalFlatFee + debit.buyPrice.flatFee;
-        }
-      } else if (paymentMethod.value === 'credit') {
-        var credit = PaymentMethods.findOne({name: 'Credit'});
-        if (type.value === 'buy') {
-          var flatFee = normalFlatFee + credit.buyPrice.flatFee;
-        }
-      }
 
-      return flatFee;
+      if (Meteor.isServer) {
+        var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency.value, toCurrency: toCurrency.value});
+        return toAmount.value * exchangeRate.value;
+      }
     }
   },
-  paymentReceived: {
+  // txid: {
+  //   type: String,
+  //   label: "txid",
+  //   optional: true
+  // },
+  notes: {
     type: String,
-    allowedValues: ['yes', 'no'],
+    optional: true,
     autoform: {
-      type: "select-radio-inline",
-      options: {
-        yes: "Yes",
-        no: "No"
-      }
-    },
-    defaultValue: 'no'
-  },
-  paymentSent: {
-    type: String,
-    allowedValues: ['yes', 'no'],
-    autoform: {
-      type: "select-radio-inline",
-      options: {
-        yes: "Yes",
-        no: "No"
-      }
-    },
-    defaultValue: 'no'
-  },
-  txid: {
-    type: String,
-    label: "txid",
-    optional: true
+      rows: 5
+    }
   },
   status: {
     type: String,
@@ -209,15 +200,9 @@ Trades.attachSchema(new SimpleSchema({
       options: {
         open: "Open",
         paid: "Close"
-      }
+      },
+      omit: true
     },
     defaultValue: 'open'
-  },
-  notes: {
-    type: String,
-    optional: true,
-    autoform: {
-      rows: 5
-    }
   }
 }));

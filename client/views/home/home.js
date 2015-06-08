@@ -8,6 +8,6 @@ Template.home.helpers({
     }
   },
   trades: function() {
-    return Trades.find({});
+    return Trades.find({}, {sort: {createdAt: -1}});
   }
 });

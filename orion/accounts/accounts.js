@@ -1,12 +1,7 @@
 orion.accounts.tabular.options.columns = [
   {
-    data: 'emails',
-    title: i18n('accounts.index.tableTitles.email'),
-    render: function(emails) {
-      return emails.map(function(email) {
-        return email.address;
-      }).join(', ');
-    }
+    data: 'emails[0].address',
+    title: i18n('accounts.index.tableTitles.email')
   },
   {
     title: i18n('accounts.index.tableTitles.enrolled'),

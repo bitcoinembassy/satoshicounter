@@ -3,33 +3,35 @@ Members = new orion.collection('members', {
   tabular: {
     order: [[0, "desc"]],
     columns: [
-      {
-        data: "createdAt",
-        title: "Created",
-        render: function(date) {
-          return moment(date).calendar();
-        }
-      },
       { data: 'number', title: 'Number' },
       { data: 'firstName', title: 'First name' },
       { data: 'lastName', title: 'Last name' },
       { data: 'phoneNumber', title: 'Phone number' },
       { data: 'email', title: 'Email' },
+      {
+        data: 'createdAt',
+        title: 'Joined',
+        render: function(date) {
+          return moment(date).calendar();
+        }
+      },
       { data: 'level', title: 'Level' }
     ]
   }
 });
 
 Members.attachSchema(new SimpleSchema({
-  createdAt: orion.attribute('createdAt'),
   number: {
     type: Number,
     unique: true,
-    denyUpdate: true,
     optional: true,
     autoValue: function() {
       if (Meteor.isServer) {
-        return incrementCounter('_counters', 'members');
+        if (this.isInsert) {
+          return incrementCounter('_counters', 'members');
+        } else {
+          this.unset();
+        }
       }
     },
     autoform: {
@@ -57,6 +59,7 @@ Members.attachSchema(new SimpleSchema({
     unique: true,
     optional: true
   },
+  createdAt: orion.attribute('createdAt'),
   level: {
     type: Number,
     allowedValues: [1, 2, 3],
@@ -81,6 +84,18 @@ Members.attachSchema(new SimpleSchema({
   idNumber: {
     type: String,
     label: "ID number",
+    optional: true
+  },
+  dateOfBirth: {
+    type: Date,
+    optional: true
+  },
+  occupation: {
+    type: String,
+    optional: true
+  },
+  address: {
+    type: String,
     optional: true
   },
   notes: {

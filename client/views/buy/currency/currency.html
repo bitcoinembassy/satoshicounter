@@ -1,0 +1,133 @@
+<template name="buyBitcoins">
+  <h1 class="text-center" style="font-size: 10vw; margin-top: 0">
+    <strong>{{formatDollarSign companyPrice}}</strong>
+  </h1>
+  <div class="row">
+    <div class="col-sm-10 col-sm-offset-1">
+      <div class="progress" style="height: 5px">
+        <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageLeft}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentageLeft}}%;">
+          <span class="sr-only">{{percentageLeft}}% Complete</span>
+        </div>
+      </div>
+      {{#autoForm collection="Trades" id="insertTradeForm" type="insert"}}
+        <div class="{{#if afFieldIsInvalid name='member'}}has-error{{/if}}">
+          {{> afFieldInput name='member'}}
+          {{#if afFieldIsInvalid name='member'}}
+            <span class="help-block">{{{afFieldMessage name='member'}}}</span>
+          {{/if}}
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="{{#if afFieldIsInvalid name='fromAmount'}}has-error{{/if}}">
+              <div class="input-group input-group-lg" style="padding-top: 10px; padding-bottom: 10px">
+                {{> afFieldInput name='fromAmount' value=fromAmount class='form-control text-right' placeholder='From' autofocus=''}}
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{fromCurrency}} <span class="caret"></span></button>
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li><a href="#">BTC</a></li>
+                    <li><a href="#">USD</a></li>
+                  </ul>
+                </div>
+              </div>
+              {{#if afFieldIsInvalid name='fromAmount'}}
+                <span class="help-block">{{{afFieldMessage name='fromAmount'}}}</span>
+              {{/if}}
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="{{#if afFieldIsInvalid name='toAmount'}}has-error{{/if}}">
+              <div class="input-group input-group-lg" style="padding-top: 10px">
+                {{> afFieldInput name='toAmount' value=toAmount class='form-control text-right' placeholder='To' step='0.0001'}}
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{toCurrency}} <span class="caret"></span></button>
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li><a href="#">CAD</a></li>
+                    <li><a href="#">USD</a></li>
+                  </ul>
+                </div>
+              </div>
+              {{#if afFieldIsInvalid name='toAmount'}}
+              <span class="help-block">{{{afFieldMessage name='toAmount'}}}</span>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-sm-6 text-center" style="padding-top: 10px; padding-bottom: 10px">
+            {{> afFieldInput name='fromCurrency' options='allowed' value=fromCurrency}}
+          </div>
+          <div class="col-sm-6 text-center" style="padding-top: 10px">
+            {{> afFieldInput name='toCurrency' options='allowed' value=toCurrency}}
+          </div>
+        </div>
+        <hr>
+        <h3 class="1text-center" style="font-size: 32px">
+          {{formatDollarSign flatFee}} flat fee
+        </h3>
+        <hr>
+        <div class="row">
+          <div class="col-sm-6 text-center" style="padding-top: 10px; padding-bottom: 10px">
+            {{> afFieldInput name='memberPaymentMethod' options='allowed' value=paymentMethod}}
+          </div>
+          <div class="col-sm-6 text-center" style="padding-top: 10px">
+            {{> afFieldInput name='companyPaymentMethod' options='allowed'}}
+          </div>
+        </div>
+        <!-- {{#if Template.subscriptionsReady}}
+          <div class="btn-group btn-group-justified btn-group-lg">
+            <a href="#" class="btn btn-default {{cash}}" id="cash" role="button">Cash</a>
+            <a href="#" class="btn btn-default {{debitCard}}" id="debitCard" role="button">Debit card</a>
+            <a href="#" class="btn btn-default {{creditCard}}" id="creditCard" role="button">Credit card</a>
+          </div>
+        {{/if}} -->
+        {{#if toAmount}}
+          {{#if currentUser}}
+            <hr>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Submit Trade</button>
+            </div>
+          {{/if}}
+          <hr>
+          <h3 class="text-muted text-right">
+            {{formatDollarSign fromAmount}}
+            − {{formatDollarSign flatFee}} flat fee
+            {{#if paymentMethodFee}}
+            − {{formatDollarSign paymentMethodFee}} {{paymentMethod}} fee
+            {{/if}}
+            − {{formatDollarSign tax}} tax =
+            {{formatDollarSign fromAmountAfterFees}}
+          </h3>
+          <h3 class="text-muted text-right">
+            {{formatDollarSign fromAmountAfterFees}}
+            &divide; {{formatDollarSign companyPrice}} =
+            {{formatBTC toAmount}}
+          </h3>
+          <h3 class="text-muted text-right">
+            {{formatBTC toAmount}} ≈ {{formatCAD marketValue}}
+          </h3>
+        {{/if}}
+        <hr>
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-6">
+            <div class="{{#if afFieldIsInvalid name='marketValue'}}has-error{{/if}}">
+              <div class="input-group input-group-lg">
+                {{> afFieldInput name='marketValue' value=marketValue class='form-control text-right' placeholder='Value' step='0.0001'}}
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">CAD <span class="caret"></span></button>
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li><a href="#">USD</a></li>
+                  </ul>
+                </div>
+              </div>
+              {{#if afFieldIsInvalid name='marketValue'}}
+              <span class="help-block">{{{afFieldMessage name='marketValue'}}}</span>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      {{/autoForm}}
+    </div>
+  </div>
+</template>

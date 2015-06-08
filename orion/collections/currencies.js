@@ -3,38 +3,24 @@ Currencies = new orion.collection('currencies', {
   tabular: {
     order: [[0, "desc"]],
     columns: [
+      { data: 'code', title: 'Code' },
       { data: 'name', title: 'Name' },
-      { data: 'code', title: 'Code' }
+      { data: 'pluralName', title: 'Plural name' }
     ]
   }
 });
 
 Currencies.attachSchema(new SimpleSchema({
-  name: {
-    type: String
-  },
   code: {
     type: String,
     allowedValues: ['BTC', 'CAD', 'USD'],
     unique: true,
     denyUpdate: true
   },
-  exchangeRates: {
-    type: [Object]
-  },
-  'exchangeRates.$.currencyCode': {
-    type: String,
-    allowedValues: ['BTC', 'CAD', 'USD']
-  },
-  'exchangeRates.$.value': {
+  name: {
     type: String
   },
-  'exchangeRates.$.percentageFee': {
-    type: Number,
-    decimal: true
-  },
-  'exchangeRates.$.flatFee': {
-    type: Number,
-    decimal: true
+  pluralName: {
+    type: String
   }
 }));

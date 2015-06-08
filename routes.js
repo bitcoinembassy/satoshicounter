@@ -32,7 +32,6 @@ Router.route('/sell', {
 
 Router.route('/buy-bitcoins', {
   name: 'buy.bitcoins',
-	template: 'bitcoins',
   onAfterAction: getAfterAction('Buy bitcoins')
 });
 

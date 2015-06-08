@@ -11,19 +11,14 @@ var btc = Meteor.setInterval(function() {
       var value = bitpayRate;
     }
 
-    Currencies.update(
+    ExchangeRates.update(
       {
-        code: 'BTC',
-        exchangeRates: {
-          currencyCode: currency
-        }
+        fromCurrency: currency,
+        toCurrency: 'BTC'
       },
       {
         $set: {
-          'exchangeRates.$': {
-            currencyCode: currency,
-            value: value
-          }
+          value: value
         },
       }
     );

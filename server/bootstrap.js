@@ -41,7 +41,7 @@ Meteor.startup(function() {
   }
 
   if (Currencies.find({code: 'BTC'}).count() === 0) {
-    var exchangeRates = ['CAD', 'USD'].map(function(currencyCode) {
+    ['CAD', 'USD'].forEach(function(currencyCode) {
       var coinbaseRate = HTTP.get("https://api.coinbase.com/v1/prices/spot_rate?currency=" + currencyCode).data['amount'];
       var bitpayRate = HTTP.get("https://bitpay.com/api/rates/" + currencyCode).data['rate'];
 
@@ -53,20 +53,19 @@ Meteor.startup(function() {
         var value = bitpayRate;
       }
 
-      var exchangeRate = {
-        currencyCode: currencyCode,
+      ExchangeRates.insert({
+        fromCurrency: currencyCode,
+        toCurrency: 'BTC',
         value: value,
         percentageFee: 5,
         flatFee: 5
-      }
-
-      return exchangeRate;
+      });
     });
 
     Currencies.insert({
-      name: 'Bitcoin',
       code: 'BTC',
-      exchangeRates: exchangeRates
+      name: 'Bitcoin',
+      pluralName: 'bitcoins'
     });
 
     Timers.insert({
@@ -75,23 +74,22 @@ Meteor.startup(function() {
   }
 
   if (Currencies.find({code: 'CAD'}).count() === 0) {
-    var exchangeRates = ['BTC', 'USD'].map(function(currencyCode) {
+    ['BTC', 'USD'].forEach(function(currencyCode) {
       var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['cad_to_' + currencyCode.toLowerCase()];
 
-      var exchangeRate = {
-        currencyCode: currencyCode,
+      ExchangeRates.insert({
+        fromCurrency: currencyCode,
+        toCurrency: 'CAD',
         value: value,
         percentageFee: 5,
         flatFee: 5
-      }
-
-      return exchangeRate;
+      });
     });
 
     Currencies.insert({
-      name: 'Canadian dollar',
       code: 'CAD',
-      exchangeRates: exchangeRates
+      name: 'Canadian Dollar',
+      pluralName: 'Canadian dollars'
     });
 
     Timers.insert({
@@ -100,23 +98,22 @@ Meteor.startup(function() {
   }
 
   if (Currencies.find({code: 'USD'}).count() === 0) {
-    var exchangeRates = ['BTC', 'CAD'].map(function(currencyCode) {
+    ['BTC', 'CAD'].forEach(function(currencyCode) {
       var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['usd_to_' + currencyCode.toLowerCase()];
 
-      var exchangeRate = {
-        currencyCode: currencyCode,
+      ExchangeRates.insert({
+        fromCurrency: currencyCode,
+        toCurrency: 'USD',
         value: value,
         percentageFee: 5,
         flatFee: 5
-      }
-
-      return exchangeRate;
+      });
     });
 
     Currencies.insert({
-      name: 'US dollar',
       code: 'USD',
-      exchangeRates: exchangeRates
+      name: 'US Dollar',
+      pluralName: 'US dollars'
     });
 
     Timers.insert({

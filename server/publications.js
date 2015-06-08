@@ -1,9 +1,9 @@
-Meteor.publish('BTC', function() {
-  return Currencies.find({code: 'BTC'});
-})
-
 Meteor.publish('currencies', function() {
   return Currencies.find();
+});
+
+Meteor.publish('exchangeRates', function() {
+  return ExchangeRates.find();
 });
 
 Meteor.publish('paymentMethods', function() {
