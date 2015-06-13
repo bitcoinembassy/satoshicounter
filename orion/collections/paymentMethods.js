@@ -31,10 +31,11 @@ PaymentMethods.attachSchema(new SimpleSchema({
   name: {
     type: String
   },
-  currencyCode: {
-    type: String,
-    allowedValues: ['BTC', 'CAD', 'USD']
-  },
+  currency: orion.attribute('hasOne', {}, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'paymentMethodCurrency'
+  }),
   percentageFee: {
     type: Number,
     decimal: true

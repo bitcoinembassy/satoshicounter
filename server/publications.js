@@ -1,3 +1,11 @@
+Meteor.publish('exchangeRate', function(fromCurrency, toCurrency) {
+  return ExchangeRates.find({fromCurrency: 'CAD', toCurrency: 'BTC'});
+});
+
+Meteor.publish('currency', function(pluralName) {
+  return Currencies.find({pluralName: pluralName});
+});
+
 Meteor.publish('currencies', function() {
   return Currencies.find();
 });

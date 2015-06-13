@@ -2,20 +2,11 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
-.input-group-lg>.form-control, .input-group-lg>.input-group-addon, .input-group-lg>.input-group-btn>.btn {
+/*.input-group-lg>.form-control, .input-group-lg>.input-group-addon, .input-group-lg>.input-group-btn>.btn {
   height: 69px;
   font-size: 32px;
-}
+}*/
 
-.btn-lg {
+/*.btn-lg {
   font-size: 32px;
-}
-/*
-.selectize-input, .selectize-input input {
-  font-size: 32px;
-  line-height: 50px;
-}
-
-.selectize-dropdown {
-  font-size: 14px;
 }*/

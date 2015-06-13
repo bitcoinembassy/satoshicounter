@@ -1,5 +1,5 @@
 var btc = Meteor.setInterval(function() {
-  ['CAD', 'USD'].forEach(function(currency) {
+  ['cad', 'usd'].forEach(function(currency) {
     var coinbaseRate = HTTP.get("https://api.coinbase.com/v1/prices/spot_rate?currency=" + currency).data['amount'];
     var bitpayRate = HTTP.get("https://bitpay.com/api/rates/" + currency).data['rate'];
 
@@ -14,7 +14,7 @@ var btc = Meteor.setInterval(function() {
     ExchangeRates.update(
       {
         fromCurrency: currency,
-        toCurrency: 'BTC'
+        toCurrency: 'btc'
       },
       {
         $set: {

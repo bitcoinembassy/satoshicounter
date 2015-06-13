@@ -1,34 +1,14 @@
 <template name="home">
-  {{#if verifiedUser}}
-    <h2>Membership status: <strong>Level 1</strong></h2>
-    <p>Payment methods</p>
-    <p>Click here to upgrade</p>
-    <p>My rate versus Standard rate</p>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>From (amount)</th>
-          <th>To (amount)</th>
-          <th>Market value</th>
-          <th>Member payment method</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-      {{#each trades}}
-      <tr>
-        <td>{{createdAt}}</td>
-        <td>{{formatDollarSign fromAmount}}</td>
-        <td>{{formatBTC toAmount}}</td>
-        <td>{{formatDollarSign marketValue}}</td>
-        <td>{{memberPaymentMethod}}</td>
-        <td>{{status}}</td>
-      </tr>
-      {{/each}}
-      </tbody>
-    </table>
-  {{else}}
-    You need to register as a member.
-  {{/if}}
+  <img class="img-responsive center-block" src="bitcoin_logo.png">
+  <hr>
+  <div class="row text-center">
+    <div class="col-sm-6">
+      <a class="btn btn-primary btn-lg btn-block" href="/cad/btc">Buy</a>
+      <!-- <strong style="font-size: 5vw">$311.08</strong> -->
+    </div>
+    <div class="col-sm-6">
+      <a class="btn btn-primary btn-lg btn-block" href="/btc/cad">Sell</a>
+      <!-- <strong style="font-size: 5vw">$270.14</strong> -->
+    </div>
+  </div>
 </template>

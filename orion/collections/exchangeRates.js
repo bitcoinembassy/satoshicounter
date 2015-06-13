@@ -29,16 +29,20 @@ ExchangeRates = new orion.collection('exchange-rates', {
 });
 
 ExchangeRates.attachSchema(new SimpleSchema({
-  fromCurrency: {
-    type: String,
-    label: 'From (currency)',
-    allowedValues: ['BTC', 'CAD', 'USD']
-  },
-  toCurrency: {
-    type: String,
-    label: 'To (currency)',
-    allowedValues: ['BTC', 'CAD', 'USD']
-  },
+  fromCurrency: orion.attribute('hasOne', {
+    label: 'From'
+  }, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'exchangeRateFromCurrency'
+  }),
+  toCurrency: orion.attribute('hasOne', {
+    label: 'To'
+  }, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'exchangeRateToCurrency'
+  }),
   value: {
     type: Number,
     decimal: true

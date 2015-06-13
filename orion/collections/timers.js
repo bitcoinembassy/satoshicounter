@@ -1,7 +1,7 @@
 Timers = new Meteor.Collection('timers');
 
 Timers.attachSchema(new SimpleSchema({
-  currencyCode: {
+  exchangeRate: {
     type: String
   },
   value: {

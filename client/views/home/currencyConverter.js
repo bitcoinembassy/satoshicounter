@@ -1,4 +1,11 @@
-Template.buyBitcoins.onCreated(function() {
+Template.currencyConverter.onCreated(function() {
+  console.log(Router.current().params.fromCurrency)
+  console.log(Router.current().params.toCurrency)
+  var self = this;
+  self.autorun(function() {
+    self.subscribe('exchangeRate', Router.current().params.fromCurrency, Router.current().params.toCurrency);
+  });
+
   // var currency = this.subscribe('currencies');
   //
   // this.autorun(function() {
@@ -37,9 +44,10 @@ Template.buyBitcoins.onCreated(function() {
   });
 });
 
-Template.buyBitcoins.helpers({
+Template.currencyConverter.helpers({
   companyPrice: function() {
-    return Session.get('buy.companyPrice');
+    // return Session.get('buy.companyPrice');
+    return 303.05;
   },
   percentageLeft: function() {
     return Session.get('buy.timeLeft') / 0.6;
@@ -78,10 +86,13 @@ Template.buyBitcoins.helpers({
     if (Session.get('buy.toAmount')) {
       return accounting.toFixed(Session.get('buy.toAmount') * Session.get('buy.marketPrice'), 2);
     }
+  },
+  marketValueCurrency: function() {
+    return 'CAD';
   }
 });
 
-Template.buyBitcoins.events({
+Template.currencyConverter.events({
   "input [name=fromAmount]": function(event) {
     var fromAmount = event.target.value;
     if ($.isNumeric(fromAmount)) {

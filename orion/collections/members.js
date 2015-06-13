@@ -86,18 +86,6 @@ Members.attachSchema(new SimpleSchema({
     label: "ID number",
     optional: true
   },
-  dateOfBirth: {
-    type: Date,
-    optional: true
-  },
-  occupation: {
-    type: String,
-    optional: true
-  },
-  address: {
-    type: String,
-    optional: true
-  },
   notes: {
     type: String,
     optional: true,

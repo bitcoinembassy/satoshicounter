@@ -40,7 +40,7 @@ Trades = new orion.collection('trades', {
 Trades.attachSchema(new SimpleSchema({
   createdAt: orion.attribute('createdAt'),
   member: orion.attribute('hasOne', {
-    label: 'Member number'
+    label: 'Member'
   }, {
     collection: Members,
     titleField: 'number',
@@ -48,22 +48,24 @@ Trades.attachSchema(new SimpleSchema({
   }),
   fromAmount: {
     type: Number,
-    label: 'From (amount)',
+    label: 'Amount',
     min: 5,
     decimal: true
   },
-  fromCurrency: {
-    type: String,
-    label: 'From (currency)',
-    allowedValues: ['BTC', 'CAD', 'USD'],
-    defaultValue: 'CAD'
-  },
-  toCurrency: {
-    type: String,
-    label: 'To (currency)',
-    allowedValues: ['BTC', 'CAD', 'USD'],
-    defaultValue: 'BTC'
-  },
+  fromCurrency: orion.attribute('hasOne', {
+    label: 'From'
+  }, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'tradeFromCurrency'
+  }),
+  toCurrency: orion.attribute('hasOne', {
+    label: 'To'
+  }, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'tradeToCurrency'
+  }),
   memberPaymentReceived: {
     type: String,
     label: 'Member payment received',
@@ -77,29 +79,33 @@ Trades.attachSchema(new SimpleSchema({
     },
     defaultValue: 'no'
   },
-  memberPaymentMethod: {
-    type: String,
-    allowedValues: ['Cash', 'Debit card', 'Credit card'],
-    autoform: {
-      type: 'select-radio',
-      template: 'buttonGroup',
-      label: false,
-      // options: function() {
-      //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
-      //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
-      //     return {label: obj.name, value: obj.name};
-      //   });
-      // }
-      // options: {
-      //   yes: "Yes",
-      //   no: "No"
-      // }
-    },
-    defaultValue: 'Cash'
-  },
+  memberPaymentMethod: orion.attribute('hasOne', {
+    label: 'Payment'
+  }, {
+    collection: PaymentMethods,
+    titleField: 'name',
+    publicationName: 'memberPaymentMethod'
+  }),
+  // memberPaymentMethod: {
+  //   type: String,
+  //   autoform: {
+  //     type: 'select-radio-inline',
+  //     // options: function() {
+  //     //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
+  //     //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
+  //     //     return {label: obj.name, value: obj.name};
+  //     //   });
+  //     // }
+  //     // options: {
+  //     //   yes: "Yes",
+  //     //   no: "No"
+  //     // }
+  //   },
+  //   defaultValue: 'Cash'
+  // },
   toAmount: {
     type: Number,
-    label: 'To (amount)',
+    label: 'Amount',
     optional: true,
     min: 0,
     decimal: true,
@@ -139,29 +145,35 @@ Trades.attachSchema(new SimpleSchema({
     },
     defaultValue: 'no'
   },
-  companyPaymentMethod: {
-    type: String,
-    allowedValues: ['Bitcoin address'],
-    autoform: {
-      type: 'select-radio',
-      template: 'buttonGroup',
-      label: false
-      // label: false,
-      // options: function() {
-      //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
-      //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
-      //     return {label: obj.name, value: obj.name};
-      //   });
-      // }
-      // options: {
-      //   yes: "Yes",
-      //   no: "No"
-      // }
-    },
-    defaultValue: 'Bitcoin address'
-  },
+  companyPaymentMethod: orion.attribute('hasOne', {
+    label: 'Payment'
+  }, {
+    collection: PaymentMethods,
+    titleField: 'name',
+    publicationName: 'companyPaymentMethod'
+  }),
+  // companyPaymentMethod: {
+  //   type: String,
+  //   allowedValues: ['Bitcoin address'],
+  //   autoform: {
+  //     type: 'select-radio',
+  //     // label: false,
+  //     // options: function() {
+  //     //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
+  //     //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
+  //     //     return {label: obj.name, value: obj.name};
+  //     //   });
+  //     // }
+  //     // options: {
+  //     //   yes: "Yes",
+  //     //   no: "No"
+  //     // }
+  //   },
+  //   defaultValue: 'Bitcoin address'
+  // },
   marketValue: {
     type: Number,
+    label: 'Value',
     optional: true,
     min: 0,
     decimal: true,
@@ -180,6 +192,13 @@ Trades.attachSchema(new SimpleSchema({
       }
     }
   },
+  marketValueCurrency: orion.attribute('hasOne', {
+    label: 'Valued in'
+  }, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'marketValueCurrency'
+  }),
   // txid: {
   //   type: String,
   //   label: "txid",
