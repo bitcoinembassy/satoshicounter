@@ -1,6 +1,6 @@
 <template name="currencyConverter">
   {{#autoForm collection='Trades' id='insertTradeForm' type='insert' class='form-horizontal'}}
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-sm-6">
         <div class="form-group">
           <label class="col-sm-2 control-label">{{afFieldLabelText name='fromCurrency'}}</label>
@@ -17,8 +17,16 @@
           </div>
         </div>
       </div>
+    </div> -->
+    <h1 class="text-right" style="font-size: 9vw; margin-top: 0">
+      <strong>{{companyPrice}}</strong> <small>{{mainCurrency}}</small>
+    </h1>
+    <div class="progress" style="height: 5px; margin-bottom: 35px">
+      <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageLeft}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentageLeft}}%;">
+        <span class="sr-only">{{percentageLeft}}% Complete</span>
+      </div>
     </div>
-    <div class="form-group {{#if afFieldIsInvalid name='marketValueCurrency'}}has-error{{/if}}">
+    <!-- <div class="form-group {{#if afFieldIsInvalid name='marketValueCurrency'}}has-error{{/if}}">
       <label class="col-sm-1 control-label">{{afFieldLabelText name='marketValueCurrency'}}</label>
       <div class="col-sm-11">
         {{> afFieldInput name='marketValueCurrency'}}
@@ -26,31 +34,7 @@
           <span class="help-block">{{{afFieldMessage name='marketValueCurrency'}}}</span>
         {{/if}}
       </div>
-    </div>
-    <!-- <hr> -->
-    <!-- <div class="progress" style="height: 5px">
-      <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageLeft}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentageLeft}}%;">
-        <span class="sr-only">{{percentageLeft}}% Complete</span>
-      </div>
     </div> -->
-    <h1 class="text-center" style="font-size: 11vw; margin-top: 0">
-      <strong>{{formatDollarSign companyPrice}}</strong>
-    </h1>
-    <!-- <hr> -->
-    <h2 class="text-center" style="margin-top: 0">
-      + {{formatDollarSign flatFee}} flat fee
-    </h2>
-    <hr>
-    <div class="form-group {{#if afFieldIsInvalid name='member'}}has-error{{/if}}">
-      <label class="col-sm-1 control-label">{{afFieldLabelText name='member'}}</label>
-      <div class="col-sm-11">
-        {{> afFieldInput name='member' placeholder='What is your member number?'}}
-        {{#if afFieldIsInvalid name='member'}}
-          <span class="help-block">{{{afFieldMessage name='member'}}}</span>
-        {{/if}}
-      </div>
-    </div>
-    <hr>
     <div class="row">
       <div class="col-sm-6">
         <div class="form-group form-group-lg {{#if afFieldIsInvalid name='fromAmount'}}has-error{{/if}}">
@@ -64,6 +48,12 @@
           {{#if afFieldIsInvalid name='fromAmount'}}
             <span class="help-block">{{{afFieldMessage name='fromAmount'}}}</span>
           {{/if}}
+        </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">{{afFieldLabelText name='memberPaymentMethod'}}</label>
+          <div class="col-sm-10">
+            {{> afFieldInput name='memberPaymentMethod' value=memberPaymentMethod placeholder='How do you want to pay?'}}
+          </div>
         </div>
       </div>
       <div class="col-sm-6">
@@ -79,9 +69,54 @@
             {{/if}}
           </div>
         </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">{{afFieldLabelText name='companyPaymentMethod'}}</label>
+          <div class="col-sm-10">
+            {{> afFieldInput name='companyPaymentMethod' value=companyPaymentMethod placeholder='How do you want to get paid?'}}
+          </div>
+        </div>
       </div>
     </div>
-    <div class="form-group form-group-lg {{#if afFieldIsInvalid name='marketValue'}}has-error{{/if}}">
+    <hr>
+    <h2 class="text-right">
+      Flat fee = {{formatCAD flatFee}}
+    </h2>
+    {{#if memberPaymentMethodFee}}
+      <h2 class="text-right">
+        {{memberPaymentMethod}} fee = {{formatCAD memberPaymentMethodFee}}
+      </h2>
+    {{/if}}
+    {{#if fromAmount}}
+      <h2 class="text-right">
+        Sales tax = {{formatCAD tax}}
+      </h2>
+    {{/if}}
+    {{#if toAmount}}
+    <hr>
+    <p class="lead text-muted text-right">
+      Flat fee
+      {{#if memberPaymentMethodFee}}
+      + {{memberPaymentMethod}} fee
+      {{/if}}
+      + Sales tax
+      = {{formatCAD totalFees}}
+    </p>
+    <p class="lead text-muted text-right">
+      {{formatCAD fromAmount}}
+      - {{formatCAD totalFees}}
+      = {{formatCAD amountMinusFees}}
+    </p>
+    <p class="lead text-muted text-right">
+      {{formatCAD amountMinusFees}}
+      &divide; {{formatCAD companyPrice}} =
+      {{formatBTC toAmount}}
+    </p>
+    <hr>
+    <h2 class="text-right">
+      {{formatBTC toAmount}} ≈ {{formatCAD marketValue}}
+    </h2>
+    {{/if}}
+    <!-- <div class="form-group form-group-lg {{#if afFieldIsInvalid name='marketValue'}}has-error{{/if}}">
       <label class="col-sm-1 control-label">{{afFieldLabelText name='marketValue'}}</label>
       <div class="col-sm-11">
         <div class="input-group input-group-lg">
@@ -92,58 +127,26 @@
       {{#if afFieldIsInvalid name='marketValue'}}
         <span class="help-block">{{{afFieldMessage name='marketValue'}}}</span>
       {{/if}}
-    </div>
+    </div> -->
     <hr>
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="col-sm-2 control-label">{{afFieldLabelText name='memberPaymentMethod'}}</label>
-          <div class="col-sm-10">
-            {{> afFieldInput name='memberPaymentMethod' value=paymentMethod placeholder='How do you want to pay?'}}
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="col-sm-2 control-label">{{afFieldLabelText name='companyPaymentMethod'}}</label>
-          <div class="col-sm-10">
-            {{> afFieldInput name='companyPaymentMethod' placeholder='How do you want to get paid?'}}
-          </div>
-        </div>
+    <div class="form-group {{#if afFieldIsInvalid name='member'}}has-error{{/if}}">
+      <label class="col-sm-1 control-label">{{afFieldLabelText name='member'}}</label>
+      <div class="col-sm-11">
+        {{> afFieldInput name='member' placeholder='What is your member number?'}}
+        {{#if afFieldIsInvalid name='member'}}
+          <span class="help-block">{{{afFieldMessage name='member'}}}</span>
+        {{/if}}
       </div>
     </div>
-    <!-- {{#if Template.subscriptionsReady}}
-      <div class="btn-group btn-group-justified btn-group-lg">
-        <a href="#" class="btn btn-default {{cash}}" id="cash" role="button">Cash</a>
-        <a href="#" class="btn btn-default {{debitCard}}" id="debitCard" role="button">Debit card</a>
-        <a href="#" class="btn btn-default {{creditCard}}" id="creditCard" role="button">Credit card</a>
-      </div>
-    {{/if}} -->
-    {{#if toAmount}}
-      {{#if currentUser}}
+    {{#if currentUser}}
+      {{#if member}}
         <hr>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary btn-lg btn-block">Submit Trade</button>
+          <div class="col-sm-offset-1 col-sm-11">
+            <button type="submit" class="btn btn-primary btn-lg">Submit Trade</button>
+          </div>
         </div>
       {{/if}}
-      <hr>
-      <h3 class="text-muted text-right">
-        {{formatDollarSign fromAmount}}
-        − {{formatDollarSign flatFee}} flat fee
-        {{#if paymentMethodFee}}
-        − {{formatDollarSign paymentMethodFee}} {{paymentMethod}} fee
-        {{/if}}
-        − {{formatDollarSign tax}} tax =
-        {{formatDollarSign fromAmountAfterFees}}
-      </h3>
-      <h3 class="text-muted text-right">
-        {{formatDollarSign fromAmountAfterFees}}
-        &divide; {{formatDollarSign companyPrice}} =
-        {{formatBTC toAmount}}
-      </h3>
-      <h3 class="text-muted text-right">
-        {{formatBTC toAmount}} ≈ {{formatCAD marketValue}}
-      </h3>
     {{/if}}
   {{/autoForm}}
 </template>

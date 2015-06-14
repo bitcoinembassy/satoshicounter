@@ -1,11 +1,14 @@
-var usd = Meteor.setInterval(function() {
-  ['BTC', 'CAD'].forEach(function(currency) {
-    var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['usd_to_' + currency.toLowerCase()];
+['BTC', 'CAD'].forEach(function(currencyCode) {
+  var interval = Meteor.setInterval(function() {
+    var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data[currencyCode.toLowerCase() + '_to_usd'];
+
+    var fromCurrency = Currencies.findOne({code: currencyCode});
+    var toCurrency = Currencies.findOne({code: 'USD'});
 
     ExchangeRates.update(
       {
-        fromCurrency: currency,
-        toCurrency: 'USD'
+        fromCurrency: fromCurrency._id,
+        toCurrency: toCurrency._id
       },
       {
         $set: {
@@ -13,19 +16,25 @@ var usd = Meteor.setInterval(function() {
         },
       }
     );
-  });
-}, 60000);
+  }, 60000);
 
-Meteor.setInterval(function() {
-  var value = Math.ceil((usd._idleStart + usd._idleTimeout - Date.now()) / 1000);
-  Timers.update(
-    {
-      currencyCode: 'USD'
-    },
-    {
-      $set: {
-        value: value
+  Meteor.setInterval(function() {
+    var value = Math.ceil((interval._idleStart + interval._idleTimeout - Date.now()) / 1000);
+
+    var fromCurrency = Currencies.findOne({code: currencyCode});
+    var toCurrency = Currencies.findOne({code: 'USD'});
+
+    var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency._id, toCurrency: toCurrency._id});
+
+    Timers.update(
+      {
+        exchangeRate: exchangeRate._id
+      },
+      {
+        $set: {
+          value: value
+        }
       }
-    }
-  );
-}, 5000);
+    );
+  }, 5000);
+});

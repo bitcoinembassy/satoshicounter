@@ -1,130 +1,186 @@
 Template.currencyConverter.onCreated(function() {
-  console.log(Router.current().params.fromCurrency)
-  console.log(Router.current().params.toCurrency)
   var self = this;
+
+  var currencies = self.subscribe('currencies');
+
+  Session.set('fromCurrency', Router.current().params.fromCurrency.toUpperCase());
+  Session.set('toCurrency', Router.current().params.toCurrency.toUpperCase());
+
   self.autorun(function() {
-    self.subscribe('exchangeRate', Router.current().params.fromCurrency, Router.current().params.toCurrency);
+    if (currencies.ready()) {
+      var fromCurrency = Currencies.findOne({code: Session.get('fromCurrency')});
+      var toCurrency = Currencies.findOne({code: Session.get('toCurrency')});
+
+      if (fromCurrency && toCurrency) {
+        Session.setDefault('memberPaymentMethod', fromCurrency.mainPaymentMethod);
+        Session.setDefault('companyPaymentMethod', toCurrency.mainPaymentMethod);
+
+        var currentExchangeRate = self.subscribe('exchangeRate', fromCurrency._id, toCurrency._id);
+
+        if (currentExchangeRate.ready()) {
+          var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency._id, toCurrency: toCurrency._id});
+
+          if (exchangeRate) {
+            Session.set('exchangeRateId', exchangeRate._id);
+
+            var companyPrice = exchangeRate.value * (1 + exchangeRate.percentageFee / 100);
+            Session.set('companyPrice', Math.round(companyPrice * 100) / 100);
+
+            var mainCurrency = Currencies.findOne(exchangeRate.mainCurrency);
+            Session.set('mainCurrency', mainCurrency.code);
+
+            Session.set('flatFee', exchangeRate.flatFee);
+
+            var tax = exchangeRate.flatFee * 0.05 + exchangeRate.flatFee * 0.09975;
+            Session.set('tax', Math.round(tax * 100) / 100);
+          }
+        }
+      }
+    }
   });
 
-  // var currency = this.subscribe('currencies');
-  //
-  // this.autorun(function() {
-  //   if (currency.ready()) {
-  //     var btc = Currencies.findOne({code: 'BTC'});
-  //
-  //     var marketPrice = btc.exchangeRates[0].value;
-  //     Session.set('buy.marketPrice', marketPrice);
-  //
-  //     var companyPrice = marketPrice * (1 + btc.exchangeRates[0].percentageFee / 100);
-  //     Session.set('buy.companyPrice', companyPrice);
-  //
-  //     Session.set('buy.flatFee', btc.exchangeRates[0].flatFee);
-  //   }
-  // });
+  var timers = self.subscribe('timers');
 
-  // Session.setDefault('buy.btc.paymentMethod', 'Cash');
+  this.autorun(function() {
+    if (timers.ready()) {
+      var exchangeRateId = Session.get('exchangeRateId');
+      if (exchangeRateId) {
+        var timer = Timers.findOne({exchangeRate: exchangeRateId});
+        Session.set('timerValue', timer.value);
+      }
+    }
+  });
 
-  // var paymentMethods = this.subscribe('paymentMethods');
+  var paymentMethods = this.subscribe('paymentMethods');
   //
   // this.autorun(function() {
   //   if (paymentMethods.ready()) {
-  //     var paymentMethod = PaymentMethods.findOne({name: Session.get('buy.btc.paymentMethod')});
+  //     var fromCurrency = Currencies.findOne({code: Session.get('fromCurrency')});
+  //
+  //     var paymentMethod = PaymentMethods.findOne({currency: Session.get('buy.btc.paymentMethod')});
   //     var percentageFee = Session.get('buy.fromAmount') * (paymentMethod.percentageFee / 100);
   //     Session.set('buy.paymentMethodFee', percentageFee + paymentMethod.flatFee);
   //   }
   // });
+});
 
-  var timers = this.subscribe('timers');
+Template.currencyConverter.onRendered(function() {
+  var paymentMethods = this.subscribe('paymentMethods');
 
   this.autorun(function() {
-    if (timers.ready()) {
-      var cad = Timers.findOne({currencyCode: 'CAD'});
-      Session.set('buy.timeLeft', cad.value);
+    var memberPaymentMethod = AutoForm.getFieldValue('memberPaymentMethod', 'insertTradeForm');
+    if (memberPaymentMethod) {
+      if (paymentMethods.ready()) {
+        var paymentMethod = PaymentMethods.findOne(memberPaymentMethod);
+        Session.set('memberPaymentMethod', paymentMethod.name);
+
+        var fromAmount = Session.get('fromAmount');
+        if (fromAmount) {
+          var paymentMethodFee = fromAmount * (paymentMethod.percentageFee / 100) + paymentMethod.flatFee;
+          console.log(paymentMethodFee)
+          Session.set('memberPaymentMethodFee', paymentMethodFee);
+        }
+      }
     }
+  });
+
+  this.autorun(function() {
+    var member = AutoForm.getFieldValue('member', 'insertTradeForm');
+    Session.set('member', member);
   });
 });
 
 Template.currencyConverter.helpers({
   companyPrice: function() {
-    // return Session.get('buy.companyPrice');
-    return 303.05;
+    return Session.get('companyPrice');
+  },
+  mainCurrency: function() {
+    return Session.get('mainCurrency');
   },
   percentageLeft: function() {
-    return Session.get('buy.timeLeft') / 0.6;
+    return 100 - (Session.get('timerValue') / 0.6);
   },
   fromAmount: function() {
-    return Session.get('buy.fromAmount');
+    return Session.get('fromAmount');
   },
   fromCurrency: function() {
-    return 'CAD';
+    return Session.get('fromCurrency');
+  },
+  memberPaymentMethod: function() {
+    return Session.get('memberPaymentMethod');
   },
   toAmount: function() {
-    return Session.get('buy.toAmount');
+    return Session.get('toAmount');
   },
   toCurrency: function() {
-    return 'BTC'
+    return Session.get('toCurrency');
+  },
+  companyPaymentMethod: function() {
+    return Session.get('companyPaymentMethod');
   },
   flatFee: function() {
-    return Session.get('buy.flatFee');
+    return Session.get('flatFee');
   },
-  paymentMethod: function() {
-    return Session.get('buy.btc.paymentMethod');
+  memberPaymentMethodFee: function() {
+    return Session.get('memberPaymentMethodFee');
   },
-  paymentMethodFee: function() {
-    return Session.get('buy.paymentMethodFee');
+  companyPaymentMethodFee: function() {
+    return Session.get('companyPaymentMethodFee');
   },
   tax: function() {
-    var fees = Session.get('buy.flatFee') + Session.get('buy.paymentMethodFee');
-    return fees * 0.05 + fees * 0.09975;
+    return Session.get('tax');
   },
-  fromAmountAfterFees: function() {
-    var fees = Session.get('buy.flatFee') + Session.get('buy.paymentMethodFee');
-    var tax = fees * 0.05 + fees * 0.09975;
-    return Session.get('buy.fromAmount') - fees - tax;
+  totalFees: function() {
+    return Session.get('flatFee') + Session.get('tax');
+  },
+  amountMinusFees: function() {
+    return Session.get('fromAmount') - Session.get('flatFee') - Session.get('tax');
   },
   marketValue: function() {
-    if (Session.get('buy.toAmount')) {
-      return accounting.toFixed(Session.get('buy.toAmount') * Session.get('buy.marketPrice'), 2);
+    if (Session.get('toAmount')) {
+      return accounting.toFixed(Session.get('toAmount') * Session.get('marketPrice'), 2);
     }
   },
   marketValueCurrency: function() {
     return 'CAD';
+  },
+  member: function() {
+    return Session.get('member');
   }
 });
 
 Template.currencyConverter.events({
   "input [name=fromAmount]": function(event) {
-    var fromAmount = event.target.value;
-    if ($.isNumeric(fromAmount)) {
-      Session.set('buy.fromAmount', fromAmount);
-      var fees = Session.get('buy.flatFee') + Session.get('buy.paymentMethodFee');
-      var tax = fees * 0.05 + fees * 0.09975;
-      if (fromAmount > fees + tax) {
-        var toAmount = (fromAmount - fees - tax) / Session.get('buy.companyPrice');
-        Session.set('buy.toAmount', accounting.toFixed(toAmount, 4));
-      } else {
-        Session.set('buy.toAmount', 0);
-      }
+    var fromAmount = parseFloat(event.target.value);
+    if (isNaN(fromAmount)) {
+      Session.set('fromAmount', NaN);
+      Session.set('toAmount', NaN);
     } else {
-      Session.set('buy.fromAmount', NaN);
-      Session.set('buy.toAmount', NaN);
+      Session.set('fromAmount', fromAmount);
+      var totalFees = Session.get('flatFee') + Session.get('tax');
+      // var fees = Session.get('flatFee') + Session.get('memberPaymentMethodFee') + Session.get('companyPaymentMethodFee');
+      if (fromAmount > totalFees) {
+        var toAmount = (fromAmount - totalFees) / Session.get('companyPrice');
+        Session.set('toAmount', accounting.toFixed(toAmount, 4));
+      } else {
+        Session.set('toAmount', 0);
+      }
     }
   },
   "input [name=toAmount]": function(event) {
-    var toAmount = event.target.value;
-    if ($.isNumeric(toAmount)) {
-      Session.set('buy.toAmount', toAmount);
-      var fees = Session.get('buy.flatFee') + Session.get('buy.paymentMethodFee');
-      var tax = fees * 0.05 + fees * 0.09975;
-      var fromAmount = toAmount * Session.get('buy.companyPrice') + fees + tax;
-      if (fromAmount > fees + tax) {
-        Session.set('buy.fromAmount', accounting.toFixed(fromAmount, 2));
-      } else {
-        Session.set('buy.fromAmount', 0);
-      }
-    } else {
+    var toAmount = parseFloat(event.target.value);
+    if (isNaN(toAmount)) {
       Session.set('buy.toAmount', NaN);
       Session.set('buy.fromAmount', NaN);
+    } else {
+      Session.set('toAmount', toAmount);
+      var totalFees = Session.get('flatFee') + Session.get('tax');
+      var fromAmount = toAmount * Session.get('companyPrice') + totalFees;
+      if (fromAmount > totalFees) {
+        Session.set('fromAmount', accounting.toFixed(fromAmount, 2));
+      } else {
+        Session.set('fromAmount', 0);
+      }
     }
   },
   'change [value="Cash"]': function(event) {

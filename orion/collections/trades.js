@@ -1,42 +1,3 @@
-Trades = new orion.collection('trades', {
-  singularName: 'trade',
-  tabular: {
-    order: [[0, "desc"]],
-    columns: [
-      {
-        data: "createdAt",
-        title: "Time",
-        render: function(val, type, doc) {
-          return moment(val).calendar();
-        }
-      },
-      orion.attributeColumn('hasOne', 'member', 'Member'),
-      {
-        data: 'fromAmount',
-        title: 'From (amount)',
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      },
-      {
-        data: 'toAmount',
-        title: 'To (amount)',
-          render: function(val, type, doc) {
-            return accounting.formatMoney(val, { symbol: "BTC", precision: 4, format: "%v %s" });
-        }
-      },
-      {
-        data: 'marketValue',
-        title: 'Market value',
-        render: function(val, type, doc) {
-          return accounting.formatMoney(val);
-        }
-      },
-      { data: 'status', title: 'Status' }
-    ]
-  }
-});
-
 Trades.attachSchema(new SimpleSchema({
   createdAt: orion.attribute('createdAt'),
   member: orion.attribute('hasOne', {
@@ -48,9 +9,12 @@ Trades.attachSchema(new SimpleSchema({
   }),
   fromAmount: {
     type: Number,
-    label: 'Amount',
+    label: 'From',
     min: 5,
-    decimal: true
+    decimal: true,
+    autoform: {
+      placeholder: 'Amount'
+    }
   },
   fromCurrency: orion.attribute('hasOne', {
     label: 'From'
@@ -105,11 +69,12 @@ Trades.attachSchema(new SimpleSchema({
   // },
   toAmount: {
     type: Number,
-    label: 'Amount',
+    label: 'To',
     optional: true,
     min: 0,
     decimal: true,
     autoform: {
+      placeholder: 'Amount',
       omit: true
     },
     autoValue: function() {
@@ -178,6 +143,7 @@ Trades.attachSchema(new SimpleSchema({
     min: 0,
     decimal: true,
     autoform: {
+      placeholder: 'Amount',
       omit: true
     },
     autoValue: function() {

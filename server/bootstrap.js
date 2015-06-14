@@ -1,6 +1,12 @@
 Meteor.startup(function() {
   if (Members.find().count() === 0) {
-    setCounter('_counters', 'members', 1000);
+    setCounter('_counters', 'members', 2000);
+
+    Members.insert({
+      firstName: 'Francis',
+      lastName: 'Brunelle',
+      phoneNumber: '579-488-0793'
+    });
   }
 
   if (Currencies.find().count() === 0) {
@@ -22,9 +28,9 @@ Meteor.startup(function() {
       pluralName: 'US dollars'
     });
 
-    ['cad', 'usd'].forEach(function(currencyCode) {
-      var coinbaseRate = HTTP.get("https://api.coinbase.com/v1/prices/spot_rate?currency=" + currencyCode).data['amount'];
-      var bitpayRate = HTTP.get("https://bitpay.com/api/rates/" + currencyCode).data['rate'];
+    ['CAD', 'USD'].forEach(function(currencyCode) {
+      var coinbaseRate = HTTP.get("https://api.coinbase.com/v1/prices/spot_rate?currency=" + currencyCode.toLowerCase()).data['amount'];
+      var bitpayRate = HTTP.get("https://bitpay.com/api/rates/" + currencyCode.toLowerCase()).data['rate'];
 
       if (Math.abs(coinbaseRate - bitpayRate) > coinbaseRate * 0.05) {
         var value = 0.11;
@@ -42,16 +48,17 @@ Meteor.startup(function() {
         toCurrency: toCurrency._id,
         value: value,
         percentageFee: 5,
-        flatFee: 5
+        flatFee: 5,
+        mainCurrency: fromCurrency._id
       });
 
       Timers.insert({
-        exchangeRate: exchangeRate._id
+        exchangeRate: exchangeRate
       });
     });
 
-    ['btc', 'usd'].forEach(function(currencyCode) {
-      var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['cad_to_' + currencyCode];
+    ['BTC', 'USD'].forEach(function(currencyCode) {
+      var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data[currencyCode.toLowerCase() + '_to_cad'];
 
       var fromCurrency = Currencies.findOne({code: currencyCode});
       var toCurrency = Currencies.findOne({code: 'CAD'});
@@ -60,17 +67,18 @@ Meteor.startup(function() {
         fromCurrency: fromCurrency._id,
         toCurrency: toCurrency._id,
         value: value,
-        percentageFee: 5,
-        flatFee: 5
+        percentageFee: -5,
+        flatFee: 5,
+        mainCurrency: toCurrency._id
       });
 
       Timers.insert({
-        exchangeRate: exchangeRate._id
+        exchangeRate: exchangeRate
       });
     });
 
-    ['btc', 'cad'].forEach(function(currencyCode) {
-      var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data['usd_to_' + currencyCode];
+    ['BTC', 'CAD'].forEach(function(currencyCode) {
+      var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data[currencyCode.toLowerCase() + '_to_usd'];
 
       var fromCurrency = Currencies.findOne({code: currencyCode});
       var toCurrency = Currencies.findOne({code: 'USD'});
@@ -79,28 +87,33 @@ Meteor.startup(function() {
         fromCurrency: fromCurrency._id,
         toCurrency: toCurrency._id,
         value: value,
-        percentageFee: 5,
-        flatFee: 5
+        percentageFee: -5,
+        flatFee: 5,
+        mainCurrency: toCurrency._id
       });
 
       Timers.insert({
-        exchangeRate: exchangeRate._id
+        exchangeRate: exchangeRate
       });
     });
 
-    PaymentMethods.insert({
-      name: 'Bitcoin address',
+    var bitcoin = PaymentMethods.insert({
+      name: 'Bitcoin',
       currency: btc,
       percentageFee: 0,
       flatFee: 0
     });
 
-    PaymentMethods.insert({
+    Currencies.update(btc, {$set: {mainPaymentMethod: bitcoin}});
+
+    var cash = PaymentMethods.insert({
       name: 'Cash',
       currency: cad,
       percentageFee: 0,
       flatFee: 0
     });
+
+    Currencies.update(cad, {$set: {mainPaymentMethod: cash}});
 
     PaymentMethods.insert({
       name: 'Debit card',
@@ -116,11 +129,11 @@ Meteor.startup(function() {
       flatFee: 1
     });
 
-    PaymentMethods.insert({
-      name: 'Cash',
-      currency: usd,
-      percentageFee: 2,
-      flatFee: 1
-    });
+    // PaymentMethods.insert({
+    //   name: 'Cash (USD)',
+    //   currency: usd,
+    //   percentageFee: 2,
+    //   flatFee: 1
+    // });
   }
 });
