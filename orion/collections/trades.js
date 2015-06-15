@@ -1,35 +1,90 @@
 Trades.attachSchema(new SimpleSchema({
-  createdAt: orion.attribute('createdAt'),
-  member: orion.attribute('hasOne', {
-    label: 'Member'
-  }, {
-    collection: Members,
-    titleField: 'number',
-    publicationName: 'memberNumbers'
-  }),
-  fromAmount: {
+  memberAmount: {
     type: Number,
     label: 'From',
-    min: 5,
+    min: 0,
+    decimal: true,
+    autoform: {
+      placeholder: 'I have'
+    }
+  },
+  memberPaymentMethod: {
+    type: String,
+    label: 'Method',
+    allowedValues: function() {
+      return PaymentMethods.find().map(function(paymentMethod) {
+        return paymentMethod._id;
+      });
+    },
+    autoform: {
+      type: 'select',
+      options: function() {
+        return PaymentMethods.find().map(function(paymentMethod) {
+          return {label: paymentMethod.name, value: paymentMethod._id};
+        });
+      }
+    }
+  },
+  companyAmount: {
+    type: Number,
+    label: 'To',
+    min: 0,
+    decimal: true,
+    autoform: {
+      placeholder: 'I want'
+    }
+  },
+  companyPaymentMethod: {
+    type: String,
+    label: 'Method',
+    allowedValues: function() {
+      return PaymentMethods.find().map(function(paymentMethod) {
+        return paymentMethod._id;
+      });
+    },
+    autoform: {
+      type: 'select',
+      options: function() {
+        return PaymentMethods.find().map(function(paymentMethod) {
+          return {label: paymentMethod.name, value: paymentMethod._id};
+        });
+      }
+    }
+  },
+  memberNumber: {
+    type: Number,
+    label: 'Member',
+    autoform: {
+      placeholder: 'Member number'
+    }
+  },
+  marketValue: {
+    type: Number,
+    label: 'Value',
+    optional: true,
+    min: 0,
     decimal: true,
     autoform: {
       placeholder: 'Amount'
     }
+    // autoValue: function() {
+    //   var memberPaymentMethod = this.field('memberPaymentMethod');
+    //   var companyPaymentMethod = this.field('companyPaymentMethod');
+    //   var companyAmount = this.field('companyAmount');
+    //
+    //   if (Meteor.isServer) {
+    //     var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency.value, toCurrency: toCurrency.value});
+    //     return companyAmount.value * exchangeRate.value;
+    //   }
+    // }
   },
-  fromCurrency: orion.attribute('hasOne', {
-    label: 'From'
-  }, {
-    collection: Currencies,
-    titleField: 'name',
-    publicationName: 'tradeFromCurrency'
-  }),
-  toCurrency: orion.attribute('hasOne', {
-    label: 'To'
-  }, {
-    collection: Currencies,
-    titleField: 'name',
-    publicationName: 'tradeToCurrency'
-  }),
+  // marketValueCurrency: orion.attribute('hasOne', {
+  //   label: 'Valued in'
+  // }, {
+  //   collection: Currencies,
+  //   titleField: 'name',
+  //   publicationName: 'marketValueCurrency'
+  // }),
   memberPaymentReceived: {
     type: String,
     label: 'Member payment received',
@@ -42,60 +97,6 @@ Trades.attachSchema(new SimpleSchema({
       }
     },
     defaultValue: 'no'
-  },
-  memberPaymentMethod: orion.attribute('hasOne', {
-    label: 'Payment'
-  }, {
-    collection: PaymentMethods,
-    titleField: 'name',
-    publicationName: 'memberPaymentMethod'
-  }),
-  // memberPaymentMethod: {
-  //   type: String,
-  //   autoform: {
-  //     type: 'select-radio-inline',
-  //     // options: function() {
-  //     //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
-  //     //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
-  //     //     return {label: obj.name, value: obj.name};
-  //     //   });
-  //     // }
-  //     // options: {
-  //     //   yes: "Yes",
-  //     //   no: "No"
-  //     // }
-  //   },
-  //   defaultValue: 'Cash'
-  // },
-  toAmount: {
-    type: Number,
-    label: 'To',
-    optional: true,
-    min: 0,
-    decimal: true,
-    autoform: {
-      placeholder: 'Amount',
-      omit: true
-    },
-    autoValue: function() {
-      var fromAmount = this.field('fromAmount');
-      var fromCurrency = this.field('fromCurrency');
-      var toCurrency = this.field('toCurrency');
-      var memberPaymentMethod = this.field('memberPaymentMethod');
-
-      if (Meteor.isServer) {
-        var paymentMethod = PaymentMethods.findOne({name: memberPaymentMethod.value});
-        var paymentMethodFees = fromAmount.value * (paymentMethod.percentageFee / 100) + paymentMethod.flatFee;
-
-        var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency.value, toCurrency: toCurrency.value});
-        var fees = paymentMethodFees + exchangeRate.flatFee;
-        var tax = fees * 0.05 + fees * 0.09975;
-
-        var companyPrice = exchangeRate.value * (1 + exchangeRate.percentageFee / 100);
-
-        return (fromAmount.value - fees - tax) / companyPrice;
-      }
-    }
   },
   companyPaymentSent: {
     type: String,
@@ -110,61 +111,6 @@ Trades.attachSchema(new SimpleSchema({
     },
     defaultValue: 'no'
   },
-  companyPaymentMethod: orion.attribute('hasOne', {
-    label: 'Payment'
-  }, {
-    collection: PaymentMethods,
-    titleField: 'name',
-    publicationName: 'companyPaymentMethod'
-  }),
-  // companyPaymentMethod: {
-  //   type: String,
-  //   allowedValues: ['Bitcoin address'],
-  //   autoform: {
-  //     type: 'select-radio',
-  //     // label: false,
-  //     // options: function() {
-  //     //   var fromCurrency = AutoForm.getFieldValue('fromCurrency');
-  //     //   return PaymentMethods.find({currencyCode: fromCurrency}, {sort: {name: 1}}).map(function(obj) {
-  //     //     return {label: obj.name, value: obj.name};
-  //     //   });
-  //     // }
-  //     // options: {
-  //     //   yes: "Yes",
-  //     //   no: "No"
-  //     // }
-  //   },
-  //   defaultValue: 'Bitcoin address'
-  // },
-  marketValue: {
-    type: Number,
-    label: 'Value',
-    optional: true,
-    min: 0,
-    decimal: true,
-    autoform: {
-      placeholder: 'Amount',
-      omit: true
-    },
-    autoValue: function() {
-      var fromCurrency = this.field('fromCurrency');
-      var toCurrency = this.field('toCurrency');
-      var toAmount = this.field('toAmount');
-
-
-      if (Meteor.isServer) {
-        var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency.value, toCurrency: toCurrency.value});
-        return toAmount.value * exchangeRate.value;
-      }
-    }
-  },
-  marketValueCurrency: orion.attribute('hasOne', {
-    label: 'Valued in'
-  }, {
-    collection: Currencies,
-    titleField: 'name',
-    publicationName: 'marketValueCurrency'
-  }),
   // txid: {
   //   type: String,
   //   label: "txid",
@@ -185,9 +131,10 @@ Trades.attachSchema(new SimpleSchema({
       options: {
         open: "Open",
         paid: "Close"
-      },
-      omit: true
+      }
     },
     defaultValue: 'open'
-  }
+  },
+  createdAt: orion.attribute('createdAt'),
+  createdBy: orion.attribute('createdBy')
 }));

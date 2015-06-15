@@ -11,20 +11,21 @@ Meteor.startup(function() {
 
   if (Currencies.find().count() === 0) {
     var btc = Currencies.insert({
-      code: 'BTC',
       name: 'Bitcoin',
+      code: 'BTC',
+      precision: 4,
       pluralName: 'bitcoins'
     });
 
     var cad = Currencies.insert({
-      code: 'CAD',
       name: 'Canadian Dollar',
+      code: 'CAD',
       pluralName: 'Canadian dollars'
     });
 
     var usd = Currencies.insert({
-      code: 'USD',
       name: 'US Dollar',
+      code: 'USD',
       pluralName: 'US dollars'
     });
 

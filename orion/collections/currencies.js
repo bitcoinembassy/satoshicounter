@@ -6,6 +6,10 @@ Currencies.attachSchema(new SimpleSchema({
     type: String,
     unique: true,
   },
+  precision: {
+    type: Number,
+    defaultValue: 2
+  },
   pluralName: {
     type: String
   },
