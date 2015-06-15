@@ -1,15 +1,15 @@
-Template.registerHelper('formatDollarSign', function(price) {
-  return accounting.formatMoney(price);
+Template.registerHelper('formatNumber', function(number) {
+  return accounting.formatNumber(number, Session.get('mainCurrencyPrecision'));
 });
 
-Template.registerHelper('formatBTC', function(price) {
-  return accounting.formatMoney(price, { precision: 4, symbol: "BTC",  format: "%v %s" });
+Template.registerHelper('formatMainCurrency', function (number) {
+  return accounting.formatMoney(number, { symbol: Session.get('mainCurrency'), format: "%v %s", precision: Session.get('mainCurrencyPrecision') });
 });
 
-Template.registerHelper('formatCAD', function(price) {
-  return accounting.formatMoney(price, { symbol: "CAD",  format: "%v %s" });
+Template.registerHelper('formatMemberCurrency', function (number) {
+  return accounting.formatMoney(number, { symbol: Session.get('memberCurrency'), format: "%v %s" });
 });
 
-Template.registerHelper('formatUSD', function(price) {
-  return accounting.formatMoney(price, { symbol: "USD",  format: "%v %s" });
+Template.registerHelper('formatCompanyCurrency', function (number) {
+  return accounting.formatMoney(number, { symbol: Session.get('companyCurrency'), format: "%v %s" });
 });

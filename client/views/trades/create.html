@@ -1,7 +1,7 @@
-<template name="currencyConverter">
+<template name="tradesCreate">
   {{#autoForm collection='Trades' id='insertTradeForm' type='insert'}}
-    <h1 class="text-right" style="font-size: 9vw; margin-top: 0">
-      <strong>{{companyPrice}}</strong> <small>{{mainCurrency}}</small>
+    <h1 class="text-center" id="companyPrice" style="margin-top: 0">
+      <strong>{{formatNumber companyPrice}}</strong> <small>{{mainCurrency}}</small>
     </h1>
     <div class="progress" style="height: 5px; margin-bottom: 35px">
       <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageLeft}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentageLeft}}%;">
@@ -13,7 +13,7 @@
         <div class="form-group form-group-lg {{#if afFieldIsInvalid name='memberAmount'}}has-error{{/if}}">
           <div class="input-group input-group-lg">
             {{> afFieldInput name='memberAmount' value=memberAmount class='form-control' autofocus=''}}
-            <span class="input-group-addon">{{fromCurrency}}</span>
+            <span class="input-group-addon">{{memberCurrency}}</span>
           </div>
         </div>
         <div class="form-group form-group-lg {{#if afFieldIsInvalid name='memberPaymentMethod'}}has-error{{/if}}">
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="col-md-2">
-        <button type="button" class="btn btn-default btn-lg center-block" style="margin-top: 30px; margin-bottom: 30px">
+        <button type="button" class="btn btn-default btn-lg center-block" id="switchCurrencies" style="margin-top: 30px; margin-bottom: 30px">
           <i class="fa fa-exchange fa-lg"></i>
         </button>
       </div>
@@ -29,7 +29,7 @@
         <div class="form-group form-group-lg {{#if afFieldIsInvalid name='companyAmount'}}has-error{{/if}}">
           <div class="input-group input-group-lg">
             {{> afFieldInput name='companyAmount' value=companyAmount class='form-control' step='0.0001'}}
-            <span class="input-group-addon">{{toCurrency}}</span>
+            <span class="input-group-addon">{{companyCurrency}}</span>
           </div>
         </div>
         <div class="form-group form-group-lg {{#if afFieldIsInvalid name='companyPaymentMethod'}}has-error{{/if}}">
@@ -37,31 +37,18 @@
         </div>
       </div>
     </div>
-    <!-- <table class="table">
-      <tbody>
-        <tr>
-          <td>1.8 BTC @ $304</td>
-          <td>$500.00</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <th>test</th>
-          <th>test</th>
-        </tr>
-      </tfoot>
-    </table> -->
     {{#if showReceipt}}
     <hr>
     <div class="row">
-      <div class="col-xs-8 col-md-4 col-md-offset-2 col-lg-3 col-lg-offset-3">
+      <div class="col-xs-9 col-md-4 col-md-offset-2 col-lg-4 col-lg-offset-3">
         <p class="lead">
-          {{formatBTC companyAmount}} @ {{formatCAD companyPrice}}
+          <!-- {{companyAmount}} {{companyCurrency}} @ {{companyPrice}} {{mainCurrency}} per BTC -->
+          Subtotal
         </p>
       </div>
-      <div class="col-xs-4 col-md-4 col-lg-3">
+      <div class="col-xs-3 col-md-4 col-lg-2">
         <p class="lead text-right">
-          {{formatCAD minusTotalFees}}
+          {{formatMemberCurrency memberAmountSubtotal}}
         </p>
       </div>
     </div>
@@ -69,12 +56,12 @@
       <div class="row">
         <div class="col-xs-8 col-md-4 col-md-offset-2 col-lg-3 col-lg-offset-3">
           <p class="lead">
-            {{memberPaymentMethodName}} fee (2.75%)
+            {{memberPaymentMethodName}} fee
           </p>
         </div>
         <div class="col-xs-4 col-md-4 col-lg-3">
           <p class="lead text-right">
-            {{formatCAD memberPaymentMethodFee}}
+            {{formatMemberCurrency memberPaymentMethodFee}}
           </p>
         </div>
       </div>
@@ -87,7 +74,7 @@
       </div>
       <div class="col-xs-4 col-md-4 col-lg-3">
         <p class="lead text-right">
-          {{formatCAD flatFee}}
+          {{formatMemberCurrency flatFee}}
         </p>
       </div>
     </div>
@@ -99,7 +86,7 @@
       </div>
       <div class="col-xs-4 col-md-4 col-lg-3">
         <p class="lead text-right">
-          {{formatCAD salesTax}}
+          {{formatMemberCurrency salesTax}}
         </p>
       </div>
     </div>
@@ -111,13 +98,13 @@
       </div>
       <div class="col-xs-6 col-md-4 col-lg-3">
         <h3 class="text-right">
-          <strong>{{formatCAD memberAmount}}</strong>
+          <strong>{{formatMemberCurrency memberAmount}}</strong>
         </h3>
       </div>
     </div>
     <hr>
     <p class="lead text-center">
-      {{formatBTC companyAmount}} ≈ {{formatCAD marketValue}} ≈ X USD
+      {{formatCompanyCurrency companyAmount}} ≈ {{formatMemberCurrency marketValue}} ≈ X USD
       <br>
       <small>*according to Coinbase</small>
     </p>
@@ -132,9 +119,6 @@
               <span class="input-group-btn">
                 <button class="btn btn-default" id="findMember" type="button">Confirm</button>
               </span>
-              {{#if afFieldIsInvalid name='memberNumber'}}
-                <span class="help-block">{{{afFieldMessage name='memberNumber'}}}</span>
-              {{/if}}
             </div>
           </div>
         </div>

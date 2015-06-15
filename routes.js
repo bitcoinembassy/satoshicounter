@@ -1,11 +1,15 @@
 Router.configure({
-  layoutTemplate: 'layout'
+  layoutTemplate: 'layout',
+  loadingTemplate: 'loading'
 });
 
 Router.route('/', {
 	name: 'home'
 });
 
-Router.route('/:fromCurrency/:toCurrency', {
-	name: 'currencyConverter'
+Router.route('/:memberCurrency/:companyCurrency', {
+	name: 'tradesCreate',
+  waitOn: function() {
+    return Meteor.subscribe('exchangeRate', this.params.memberCurrency, this.params.companyCurrency);
+  }
 });
