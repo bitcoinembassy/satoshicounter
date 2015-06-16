@@ -25,6 +25,12 @@ ExchangeRates.attachSchema(new SimpleSchema({
     type: Number,
     decimal: true
   },
+  // marketValueCurrencies: {
+  //   type: String
+  // },
+  // marketValueSource: {
+  //   type: String
+  // },
   mainCurrency: orion.attribute('hasOne', {}, {
     collection: Currencies,
     titleField: 'name',

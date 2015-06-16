@@ -7,9 +7,9 @@ Template.registerHelper('formatMainCurrency', function (number) {
 });
 
 Template.registerHelper('formatMemberCurrency', function (number) {
-  return accounting.formatMoney(number, { symbol: Session.get('memberCurrency'), format: "%v %s" });
+  return accounting.formatMoney(number, { symbol: Session.get('memberCurrency'), format: "%v %s", precision: Session.get('memberCurrencyPrecision') });
 });
 
 Template.registerHelper('formatCompanyCurrency', function (number) {
-  return accounting.formatMoney(number, { symbol: Session.get('companyCurrency'), format: "%v %s" });
+  return accounting.formatMoney(number, { symbol: Session.get('companyCurrency'), format: "%v %s", precision: Session.get('companyCurrencyPrecision') });
 });

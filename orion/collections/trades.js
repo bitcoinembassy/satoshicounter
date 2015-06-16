@@ -60,7 +60,6 @@ Trades.attachSchema(new SimpleSchema({
   },
   marketValue: {
     type: Number,
-    label: 'Value',
     optional: true,
     min: 0,
     decimal: true,
@@ -123,18 +122,18 @@ Trades.attachSchema(new SimpleSchema({
       rows: 5
     }
   },
-  status: {
-    type: String,
-    allowedValues: ['open', 'expired', 'close'],
-    autoform: {
-      type: 'select-radio-inline',
-      options: {
-        open: "Open",
-        paid: "Close"
-      }
-    },
-    defaultValue: 'open'
-  },
+  // status: {
+  //   type: String,
+  //   allowedValues: ['open', 'expired', 'close'],
+  //   autoform: {
+  //     type: 'select-radio-inline',
+  //     options: {
+  //       open: "Open",
+  //       paid: "Close"
+  //     }
+  //   },
+  //   defaultValue: 'open'
+  // },
   createdAt: orion.attribute('createdAt'),
   createdBy: orion.attribute('createdBy')
 }));
