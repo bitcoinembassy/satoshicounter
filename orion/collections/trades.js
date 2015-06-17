@@ -1,16 +1,26 @@
 Trades.attachSchema(new SimpleSchema({
-  memberAmount: {
-    type: Number,
-    label: 'From',
-    min: 0,
-    decimal: true,
-    autoform: {
-      placeholder: 'I have'
-    }
+  baseCurrency: {
+    type: String
   },
-  memberPaymentMethod: {
+  counterCurrency: {
+    type: String
+  },
+  companyPrice: {
+    type: Number,
+    decimal: true
+  },
+  percentageFee: {
+    type: Number,
+    decimal: true
+  },
+  amountReceived: {
+    type: Number,
+    min: 0,
+    decimal: true
+  },
+  paymentMethodForAmountReceived: {
     type: String,
-    label: 'Method',
+    label: 'Payment method (for amount received)',
     allowedValues: function() {
       return PaymentMethods.find().map(function(paymentMethod) {
         return paymentMethod._id;
@@ -25,18 +35,14 @@ Trades.attachSchema(new SimpleSchema({
       }
     }
   },
-  companyAmount: {
+  amountSent: {
     type: Number,
-    label: 'To',
     min: 0,
-    decimal: true,
-    autoform: {
-      placeholder: 'I want'
-    }
+    decimal: true
   },
-  companyPaymentMethod: {
+  paymentMethodForAmountSent: {
     type: String,
-    label: 'Method',
+    label: 'Payment method (for amount sent)',
     allowedValues: function() {
       return PaymentMethods.find().map(function(paymentMethod) {
         return paymentMethod._id;
@@ -49,23 +55,13 @@ Trades.attachSchema(new SimpleSchema({
           return {label: paymentMethod.name, value: paymentMethod._id};
         });
       }
-    }
-  },
-  memberNumber: {
-    type: Number,
-    label: 'Member',
-    autoform: {
-      placeholder: 'Member number'
     }
   },
   marketValue: {
     type: Number,
     optional: true,
     min: 0,
-    decimal: true,
-    autoform: {
-      placeholder: 'Amount'
-    }
+    decimal: true
     // autoValue: function() {
     //   var memberPaymentMethod = this.field('memberPaymentMethod');
     //   var companyPaymentMethod = this.field('companyPaymentMethod');
@@ -77,44 +73,29 @@ Trades.attachSchema(new SimpleSchema({
     //   }
     // }
   },
-  // marketValueCurrency: orion.attribute('hasOne', {
-  //   label: 'Valued in'
-  // }, {
-  //   collection: Currencies,
-  //   titleField: 'name',
-  //   publicationName: 'marketValueCurrency'
-  // }),
-  memberPaymentReceived: {
-    type: String,
-    label: 'Member payment received',
-    allowedValues: ['yes', 'no'],
-    autoform: {
-      type: "select-radio-inline",
-      options: {
-        yes: "Yes",
-        no: "No"
-      }
-    },
-    defaultValue: 'no'
+  memberNumber: {
+    type: Number
   },
-  companyPaymentSent: {
-    type: String,
-    label: 'Company payment sent',
-    allowedValues: ['yes', 'no'],
-    autoform: {
-      type: "select-radio-inline",
-      options: {
-        yes: "Yes",
-        no: "No"
-      }
-    },
-    defaultValue: 'no'
-  },
-  // txid: {
-  //   type: String,
-  //   label: "txid",
+  createdAt: orion.attribute('createdAt'),
+  createdBy: orion.attribute('createdBy'),
+  // transactionReceived: {
+  //   type: Boolean,
   //   optional: true
   // },
+  transactionIdForAmountReceived: {
+    type: String,
+    label: 'Transaction ID (for amount received)',
+    optional: true
+  },
+  // transactionSent: {
+  //   type: Boolean,
+  //   optional: true
+  // },
+  transactionIdForAmountSent: {
+    type: String,
+    label: 'Transaction ID (for amount sent)',
+    optional: true
+  },
   notes: {
     type: String,
     optional: true,
@@ -134,6 +115,4 @@ Trades.attachSchema(new SimpleSchema({
   //   },
   //   defaultValue: 'open'
   // },
-  createdAt: orion.attribute('createdAt'),
-  createdBy: orion.attribute('createdBy')
 }));

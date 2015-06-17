@@ -1,39 +1,29 @@
 ExchangeRates.attachSchema(new SimpleSchema({
-  fromCurrency: orion.attribute('hasOne', {
-    label: 'From'
-  }, {
-    collection: Currencies,
+  provider: orion.attribute('hasOne', {}, {
+    collection: ExchangeRateProviders,
     titleField: 'name',
-    publicationName: 'exchangeRateFromCurrency'
+    publicationName: 'exchangeRateProvider'
   }),
-  toCurrency: orion.attribute('hasOne', {
-    label: 'To'
-  }, {
+  baseCurrency: orion.attribute('hasOne', {}, {
     collection: Currencies,
     titleField: 'name',
-    publicationName: 'exchangeRateToCurrency'
+    publicationName: 'exchangeRateBaseCurrency'
   }),
-  value: {
-    type: Number,
-    decimal: true
-  },
-  percentageFee: {
-    type: Number,
-    decimal: true
-  },
-  flatFee: {
-    type: Number,
-    decimal: true
-  },
-  // marketValueCurrencies: {
-  //   type: String
-  // },
-  // marketValueSource: {
-  //   type: String
-  // },
-  mainCurrency: orion.attribute('hasOne', {}, {
+  counterCurrency: orion.attribute('hasOne', {}, {
     collection: Currencies,
     titleField: 'name',
-    publicationName: 'exchangeRateMainCurrency'
-  })
+    publicationName: 'exchangeRateCounterCurrency'
+  }),
+  endpointUrl: {
+    type: String,
+    label: 'Endpoint URL'
+  },
+  jsonKey: {
+    type: String,
+    label: 'JSON key'
+  },
+  rate: {
+    type: Number,
+    decimal: true
+  }
 }));

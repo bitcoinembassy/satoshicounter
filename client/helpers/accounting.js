@@ -1,5 +1,5 @@
 Template.registerHelper('formatNumber', function(number) {
-  return accounting.formatNumber(number, Session.get('mainCurrencyPrecision'));
+  return accounting.formatNumber(number, Session.get('counterCurrency.precision'));
 });
 
 Template.registerHelper('formatMainCurrency', function (number) {

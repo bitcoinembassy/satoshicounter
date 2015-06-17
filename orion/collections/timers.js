@@ -1,8 +1,8 @@
 Timers.attachSchema(new SimpleSchema({
-  exchangeRate: {
+  exchangeRateProvider: {
     type: String
   },
-  value: {
+  timeBeforeNextRefresh: {
     type: Number,
     optional: true
   }

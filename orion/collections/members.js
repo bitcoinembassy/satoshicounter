@@ -27,7 +27,7 @@ Members.attachSchema(new SimpleSchema({
     regEx: /^\d{3}-\d{3}-\d{4}$/,
     autoform: {
       afFieldInput: {
-        type: "tel"
+        type: 'tel'
       }
     }
   },
@@ -44,6 +44,13 @@ Members.attachSchema(new SimpleSchema({
     defaultValue: 1,
     autoform: {
       type: "select-radio-inline"
+    }
+  },
+  notes: {
+    type: String,
+    optional: true,
+    autoform: {
+      rows: 5
     }
   },
   idType: {
@@ -63,12 +70,5 @@ Members.attachSchema(new SimpleSchema({
     type: String,
     label: "ID number",
     optional: true
-  },
-  notes: {
-    type: String,
-    optional: true,
-    autoform: {
-      rows: 5
-    }
   }
 }));

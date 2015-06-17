@@ -1,57 +1,75 @@
-Template.tradesCreate.onCreated(function() {
-  var memberCurrency = Currencies.findOne({code: Router.current().params.memberCurrency.toUpperCase()});
-  var companyCurrency = Currencies.findOne({code: Router.current().params.companyCurrency.toUpperCase()});
+Template.tradesCreate.onCreated(function () {
+  var baseCurrencyCode = Router.current().params.baseCurrency.toUpperCase();
+  var counterCurrencyCode = Router.current().params.counterCurrency.toUpperCase();
 
-  this.autorun(function() {
-    var exchangeRate = ExchangeRates.findOne({fromCurrency: memberCurrency._id, toCurrency: companyCurrency._id});
-    var companyPrice = exchangeRate.value * (1 + exchangeRate.percentageFee / 100);
+  var companyPriceSubscription = this.subscribe('companyPrice', baseCurrencyCode, counterCurrencyCode);
 
-    Session.set('companyPrice', parseFloat(accounting.toFixed(companyPrice, 2)));
-    Session.set('exchangeRateId', exchangeRate._id);
-    Session.set('exchangeRate.flatFee', exchangeRate.flatFee);
-    Session.set('marketPrice', exchangeRate.value);
+  this.autorun(function () {
+    if (companyPriceSubscription.ready()) {
+      var baseCurrency = Currencies.findOne({code: baseCurrencyCode});
+      var counterCurrency = Currencies.findOne({code: counterCurrencyCode});
 
-    var mainCurrency = Currencies.findOne(exchangeRate.mainCurrency);
-    Session.set('mainCurrencyPrecision', mainCurrency.precision);
-    Session.set('mainCurrency', mainCurrency.code);
+      var companyPrice = CompanyPrices.findOne({baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
+      Session.set('exchangeRateProviderId', companyPrice.exchangeRateProvider);
+
+      var companyPrice = Session.get('exchangeRate.rate') * (1 + companyPrice.percentageFeeForBuyers / 100);
+
+      Session.set('companyPrice', parseFloat(accounting.toFixed(companyPrice, 2)));
+      Session.set('companyPrice.flatFee', companyPrice.flatFee);
+
+      Session.set('counterCurrency.precision', counterCurrency.precision);
+      Session.set('counterCurrency.code', counterCurrency.code);
+    }
+  });
+
+  var exchangeRateSubscription = this.subscribe('exchangeRate', baseCurrencyCode, counterCurrencyCode);
+
+  this.autorun(function () {
+    if (exchangeRateSubscription.ready()) {
+      var baseCurrency = Currencies.findOne({code: baseCurrencyCode});
+      var counterCurrency = Currencies.findOne({code: counterCurrencyCode});
+
+      var exchangeRate = ExchangeRates.findOne({provider: Session.get('exchangeRateProviderId'), baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
+      Session.set('exchangeRate.rate', exchangeRate.rate);
+    }
   });
 
   var timers = this.subscribe('timers');
 
   this.autorun(function() {
     if (timers.ready()) {
-      var timer = Timers.findOne({exchangeRate: Session.get('exchangeRateId')});
-      Session.set('timerValue', timer.value);
+      var timer = Timers.findOne({exchangeRateProvider: Session.get('exchangeRateProviderId')});
+      Session.set('timerValue', timer.timeBeforeNextRefresh);
     }
   });
 
-  Session.set('memberCurrencyPrecision', memberCurrency.precision);
-  Session.set('memberCurrency', memberCurrency.code);
-  
-  Session.set('companyCurrencyPrecision', companyCurrency.precision);
-  Session.set('companyCurrency', companyCurrency.code);
-
-  var memberPaymentMethod = PaymentMethods.findOne(memberCurrency.mainPaymentMethod);
-  var companyPaymentMethod = PaymentMethods.findOne(companyCurrency.mainPaymentMethod);
-
-  Session.setDefault('memberPaymentMethod', memberPaymentMethod._id);
-  Session.setDefault('companyPaymentMethod', companyPaymentMethod._id);
-
-  var flatFee = Session.get('exchangeRate.flatFee') + memberPaymentMethod.flatFee + companyPaymentMethod.flatFee;
-  var salesTax = parseFloat(accounting.toFixed(flatFee * 0.05 + flatFee * 0.09975, 2));
-
-  Session.set('memberPaymentMethod.flatFee', memberPaymentMethod.flatFee);
-  Session.set('companyPaymentMethod.flatFee', companyPaymentMethod.flatFee);
-  Session.set('flatFee', flatFee);
-  Session.set('salesTax', salesTax);
+  // Session.set('memberCurrencyPrecision', memberCurrency.precision);
+  // Session.set('memberCurrency', memberCurrency.code);
+  //
+  // Session.set('companyCurrencyPrecision', companyCurrency.precision);
+  // Session.set('companyCurrency', companyCurrency.code);
+  //
+  // var memberPaymentMethod = PaymentMethods.findOne(memberCurrency.mainPaymentMethod);
+  // var companyPaymentMethod = PaymentMethods.findOne(companyCurrency.mainPaymentMethod);
+  //
+  // Session.setDefault('memberPaymentMethod', memberPaymentMethod._id);
+  // Session.setDefault('companyPaymentMethod', companyPaymentMethod._id);
+  //
+  // var flatFee = Session.get('exchangeRate.flatFee') + memberPaymentMethod.flatFee + companyPaymentMethod.flatFee;
+  // var salesTax = parseFloat(accounting.toFixed(flatFee * 0.05 + flatFee * 0.09975, 2));
+  //
+  // Session.set('memberPaymentMethod.flatFee', memberPaymentMethod.flatFee);
+  // Session.set('companyPaymentMethod.flatFee', companyPaymentMethod.flatFee);
+  // Session.set('flatFee', flatFee);
+  // Session.set('salesTax', salesTax);
 });
 
 Template.tradesCreate.helpers({
   companyPrice: function() {
     return Session.get('companyPrice');
   },
-  mainCurrency: function() {
-    return Session.get('mainCurrency');
+  counterCurrency: function() {
+    return Session.get('counterCurrency.code');
   },
   percentageLeft: function() {
     return 100 - (Session.get('timerValue') / 0.6);

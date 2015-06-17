@@ -1,11 +1,12 @@
 Meteor.startup(function() {
   if (Members.find().count() === 0) {
-    setCounter('_counters', 'members', 2000);
+    setCounter('_counters', 'members', 1000);
 
     Members.insert({
       firstName: 'Francis',
       lastName: 'Brunelle',
-      phoneNumber: '579-488-0793'
+      phoneNumber: '579-488-0793',
+      email: 'frabrunelle@gmail.com'
     });
   }
 
@@ -13,128 +14,132 @@ Meteor.startup(function() {
     var btc = Currencies.insert({
       name: 'Bitcoin',
       code: 'BTC',
-      precision: 4,
-      pluralName: 'bitcoins'
+      precision: 4
     });
 
     var cad = Currencies.insert({
       name: 'Canadian Dollar',
-      code: 'CAD',
-      pluralName: 'Canadian dollars'
+      code: 'CAD'
     });
 
     var usd = Currencies.insert({
       name: 'US Dollar',
-      code: 'USD',
-      pluralName: 'US dollars'
+      code: 'USD'
     });
 
-    ['CAD', 'USD'].forEach(function(currencyCode) {
-      var coinbaseRate = HTTP.get("https://api.coinbase.com/v1/prices/spot_rate?currency=" + currencyCode.toLowerCase()).data['amount'];
-      var bitpayRate = HTTP.get("https://bitpay.com/api/rates/" + currencyCode.toLowerCase()).data['rate'];
-
-      if (Math.abs(coinbaseRate - bitpayRate) > coinbaseRate * 0.05) {
-        var value = 0.11;
-      } else if (coinbaseRate > bitpayRate) {
-        var value = coinbaseRate;
-      } else {
-        var value = bitpayRate;
-      }
-
-      var fromCurrency = Currencies.findOne({code: currencyCode});
-      var toCurrency = Currencies.findOne({code: 'BTC'});
-
-      var exchangeRate = ExchangeRates.insert({
-        fromCurrency: fromCurrency._id,
-        toCurrency: toCurrency._id,
-        value: value,
-        percentageFee: 5,
-        flatFee: 5,
-        mainCurrency: fromCurrency._id
-      });
-
-      Timers.insert({
-        exchangeRate: exchangeRate
-      });
+    var bitPay = ExchangeRateProviders.insert({
+      name: 'BitPay',
+      baseUrl: 'https://bitpay.com/api'
     });
 
-    ['BTC', 'USD'].forEach(function(currencyCode) {
-      var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data[currencyCode.toLowerCase() + '_to_cad'];
-
-      var fromCurrency = Currencies.findOne({code: currencyCode});
-      var toCurrency = Currencies.findOne({code: 'CAD'});
-
-      var exchangeRate = ExchangeRates.insert({
-        fromCurrency: fromCurrency._id,
-        toCurrency: toCurrency._id,
-        value: value,
-        percentageFee: -5,
-        flatFee: 5,
-        mainCurrency: toCurrency._id
-      });
-
-      Timers.insert({
-        exchangeRate: exchangeRate
-      });
+    var coinbase = ExchangeRateProviders.insert({
+      name: 'Coinbase',
+      baseUrl: 'https://api.coinbase.com'
     });
 
-    ['BTC', 'CAD'].forEach(function(currencyCode) {
-      var value = HTTP.get("https://api.coinbase.com/v1/currencies/exchange_rates").data[currencyCode.toLowerCase() + '_to_usd'];
-
-      var fromCurrency = Currencies.findOne({code: currencyCode});
-      var toCurrency = Currencies.findOne({code: 'USD'});
-
-      var exchangeRate = ExchangeRates.insert({
-        fromCurrency: fromCurrency._id,
-        toCurrency: toCurrency._id,
-        value: value,
-        percentageFee: -5,
-        flatFee: 5,
-        mainCurrency: toCurrency._id
-      });
-
-      Timers.insert({
-        exchangeRate: exchangeRate
-      });
+    Timers.insert({
+      exchangeRateProvider: bitPay
     });
 
-    var bitcoin = PaymentMethods.insert({
+    Timers.insert({
+      exchangeRateProvider: coinbase
+    });
+
+    var bitPayRateCad = HTTP.get('https://bitpay.com/api/rates/cad').data['rate'];
+    var bitPayRateUsd = HTTP.get('https://bitpay.com/api/rates/usd').data['rate'];
+
+    var coinbaseRateCad = HTTP.get('https://api.coinbase.com/v1/prices/spot_rate?currency=CAD').data['amount'];
+    var coinbaseRateUsd = HTTP.get('https://api.coinbase.com/v1/prices/spot_rate?currency=USD').data['amount'];
+
+    ExchangeRates.insert({
+      provider: bitPay,
+      baseCurrency: btc,
+      counterCurrency: cad,
+      endpointUrl: '/rates/cad',
+      jsonKey: 'rate',
+      rate: bitPayRateCad
+    });
+
+    ExchangeRates.insert({
+      provider: bitPay,
+      baseCurrency: btc,
+      counterCurrency: usd,
+      endpointUrl: '/rates/cad',
+      jsonKey: 'rate',
+      rate: bitPayRateUsd
+    });
+
+    ExchangeRates.insert({
+      provider: coinbase,
+      baseCurrency: btc,
+      counterCurrency: cad,
+      endpointUrl: '/v1/prices/spot_rate?currency=CAD',
+      jsonKey: 'amount',
+      rate: coinbaseRateCad
+    });
+
+    ExchangeRates.insert({
+      provider: coinbase,
+      baseCurrency: btc,
+      counterCurrency: usd,
+      endpointUrl: '/v1/prices/spot_rate?currency=USD',
+      jsonKey: 'amount',
+      rate: coinbaseRateUsd
+    });
+
+    CompanyPrices.insert({
+      baseCurrency: btc,
+      counterCurrency: cad,
+      exchangeRateProvider: coinbase,
+      percentageFeeForBuyers: 5,
+      percentageFeeForSellers: -5,
+      flatFee: 5
+    });
+
+    CompanyPrices.insert({
+      baseCurrency: btc,
+      counterCurrency: usd,
+      exchangeRateProvider: coinbase,
+      percentageFeeForBuyers: 7,
+      percentageFeeForSellers: -7,
+      flatFee: 6
+    });
+
+    PaymentMethods.insert({
       name: 'Bitcoin',
       currency: btc,
       percentageFee: 0,
       flatFee: 0
     });
 
-    Currencies.update(btc, {$set: {mainPaymentMethod: bitcoin}});
-
-    var cash = PaymentMethods.insert({
+    PaymentMethods.insert({
       name: 'Cash',
       currency: cad,
       percentageFee: 0,
       flatFee: 0
     });
 
-    Currencies.update(cad, {$set: {mainPaymentMethod: cash}});
-
     PaymentMethods.insert({
       name: 'Debit card',
       currency: cad,
       percentageFee: 0,
-      flatFee: 1
+      flatFee: 1,
+      canBeUsedForSending: false
     });
 
     PaymentMethods.insert({
       name: 'Credit card',
       currency: cad,
       percentageFee: 2.75,
-      flatFee: 1
+      flatFee: 1,
+      canBeUsedForSending: false
     });
 
-    // PaymentMethods.insert({
-    //   name: 'Cash (USD)',
-    //   currency: usd,
-    //   percentageFee: 2,
-    //   flatFee: 1
-    // });
+    PaymentMethods.insert({
+      name: 'Cash',
+      currency: usd,
+      percentageFee: 2,
+      flatFee: 1
+    });
   }
 });

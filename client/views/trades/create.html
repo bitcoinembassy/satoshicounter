@@ -1,7 +1,7 @@
 <template name="tradesCreate">
   {{#autoForm collection='Trades' id='insertTradeForm' type='insert'}}
     <h1 class="text-center" id="companyPrice" style="margin-top: 0">
-      <strong>{{formatNumber companyPrice}}</strong> <small>{{mainCurrency}}</small>
+      <strong>{{formatNumber companyPrice}}</strong> <small>{{counterCurrency}}</small>
     </h1>
     <div class="progress" style="height: 5px; margin-bottom: 35px">
       <div class="progress-bar" role="progressbar" aria-valuenow="{{percentageLeft}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentageLeft}}%;">
@@ -10,14 +10,14 @@
     </div>
     <div class="row">
       <div class="col-md-5">
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='memberAmount'}}has-error{{/if}}">
+        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountReceived'}}has-error{{/if}}">
           <div class="input-group input-group-lg">
-            {{> afFieldInput name='memberAmount' value=memberAmount class='form-control' autofocus=''}}
+            {{> afFieldInput name='amountReceived' value=amountReceived class='form-control' placeholder='I have' autofocus=''}}
             <span class="input-group-addon">{{memberCurrency}}</span>
           </div>
         </div>
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='memberPaymentMethod'}}has-error{{/if}}">
-          {{> afFieldInput name='memberPaymentMethod' value=memberPaymentMethod class='form-control input-lg'}}
+        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountReceived'}}has-error{{/if}}">
+          {{> afFieldInput name='paymentMethodForAmountReceived' value=paymentMethodForAmountReceived class='form-control input-lg'}}
         </div>
       </div>
       <div class="col-md-2">
@@ -26,14 +26,14 @@
         </button>
       </div>
       <div class="col-md-5">
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='companyAmount'}}has-error{{/if}}">
+        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountSent'}}has-error{{/if}}">
           <div class="input-group input-group-lg">
-            {{> afFieldInput name='companyAmount' value=companyAmount class='form-control' step='0.0001'}}
+            {{> afFieldInput name='amountSent' value=amountSent step='0.0001' class='form-control' placeholder='I want'}}
             <span class="input-group-addon">{{companyCurrency}}</span>
           </div>
         </div>
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='companyPaymentMethod'}}has-error{{/if}}">
-          {{> afFieldInput name='companyPaymentMethod' value=companyPaymentMethod class='form-control input-lg'}}
+        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountSent'}}has-error{{/if}}">
+          {{> afFieldInput name='paymentMethodForAmountSent' value=paymentMethodForAmountSent class='form-control input-lg'}}
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@
         <div class="col-lg-5">
           <div class="form-group form-group-lg {{#if afFieldIsInvalid name='memberNumber'}}has-error{{/if}}">
             <div class="input-group input-group-lg">
-              {{> afFieldInput name='memberNumber' class='form-control'}}
+              {{> afFieldInput name='memberNumber' class='form-control' placeholder='Member number'}}
               <span class="input-group-btn">
                 <button class="btn btn-default" id="findMember" type="button">Confirm</button>
               </span>

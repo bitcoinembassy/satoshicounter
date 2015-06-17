@@ -7,9 +7,20 @@ Router.route('/', {
 	name: 'home'
 });
 
-Router.route('/:memberCurrency/:companyCurrency', {
-	name: 'tradesCreate',
-  waitOn: function() {
-    return Meteor.subscribe('exchangeRate', this.params.memberCurrency, this.params.companyCurrency);
-  }
+Router.route('/:baseCurrency/:counterCurrency', {
+	name: 'tradesCreate'
+  // waitOn: function() {
+  //   var baseCurrency = Currencies.findOne({code: this.params.baseCurrency.toUpperCase()});
+  //   var counterCurrency = Currencies.findOne({code: this.params.counterCurrency.toUpperCase()});
+  //   console.log(baseCurrency._id)
+  //   console.log(counterCurrency._id)
+  //   var companyPrice = CompanyPrices.findOne({baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
+  //   console.log(companyPrice)
+  //   var exchangeRate = ExchangeRates.findOne({provider: companyPrice.provider, baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
+  //
+  //   return [
+  //     Meteor.subscribe('companyPrice', baseCurrency._id, counterCurrency._id),
+  //     Meteor.subscribe('exchangeRate', exchangeRate._id)
+  //   ];
+  // }
 });
