@@ -65,11 +65,11 @@ Trades.attachSchema(new SimpleSchema({
     // autoValue: function() {
     //   var memberPaymentMethod = this.field('memberPaymentMethod');
     //   var companyPaymentMethod = this.field('companyPaymentMethod');
-    //   var companyAmount = this.field('companyAmount');
+    //   var amountSent = this.field('amountSent');
     //
     //   if (Meteor.isServer) {
     //     var exchangeRate = ExchangeRates.findOne({fromCurrency: fromCurrency.value, toCurrency: toCurrency.value});
-    //     return companyAmount.value * exchangeRate.value;
+    //     return amountSent.value * exchangeRate.value;
     //   }
     // }
   },

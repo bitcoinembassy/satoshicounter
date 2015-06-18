@@ -14,17 +14,20 @@ Meteor.startup(function() {
     var btc = Currencies.insert({
       name: 'Bitcoin',
       code: 'BTC',
+      denomination: 'bitcoins',
       precision: 4
     });
 
     var cad = Currencies.insert({
       name: 'Canadian Dollar',
-      code: 'CAD'
+      code: 'CAD',
+      denomination: 'Canadian dollars'
     });
 
     var usd = Currencies.insert({
       name: 'US Dollar',
-      code: 'USD'
+      code: 'USD',
+      denomination: 'US dollars'
     });
 
     var bitPay = ExchangeRateProviders.insert({
@@ -57,7 +60,7 @@ Meteor.startup(function() {
       counterCurrency: cad,
       endpointUrl: '/rates/cad',
       jsonKey: 'rate',
-      rate: bitPayRateCad
+      rate: parseFloat(accounting.toFixed(bitPayRateCad, Currencies.findOne(cad).precision))
     });
 
     ExchangeRates.insert({
@@ -66,7 +69,7 @@ Meteor.startup(function() {
       counterCurrency: usd,
       endpointUrl: '/rates/cad',
       jsonKey: 'rate',
-      rate: bitPayRateUsd
+      rate: parseFloat(accounting.toFixed(bitPayRateUsd, Currencies.findOne(usd).precision))
     });
 
     ExchangeRates.insert({
@@ -91,55 +94,78 @@ Meteor.startup(function() {
       baseCurrency: btc,
       counterCurrency: cad,
       exchangeRateProvider: coinbase,
-      percentageFeeForBuyers: 5,
-      percentageFeeForSellers: -5,
-      flatFee: 5
+      percentageFeeForBuyers: 7,
+      percentageFeeForSellers: -3
     });
 
     CompanyPrices.insert({
       baseCurrency: btc,
       counterCurrency: usd,
       exchangeRateProvider: coinbase,
-      percentageFeeForBuyers: 7,
-      percentageFeeForSellers: -7,
-      flatFee: 6
+      percentageFeeForBuyers: 9,
+      percentageFeeForSellers: -5
     });
 
     PaymentMethods.insert({
       name: 'Bitcoin',
       currency: btc,
-      percentageFee: 0,
-      flatFee: 0
+      flatFeeForReceiving: 0,
+      flatFeeForSending: 0
     });
 
     PaymentMethods.insert({
       name: 'Cash',
       currency: cad,
-      percentageFee: 0,
-      flatFee: 0
+      flatFeeForReceiving: 5,
+      flatFeeForSending: 7
     });
 
     PaymentMethods.insert({
       name: 'Debit card',
       currency: cad,
-      percentageFee: 0,
-      flatFee: 1,
+      flatFeeForReceiving: 6,
       canBeUsedForSending: false
     });
 
     PaymentMethods.insert({
       name: 'Credit card',
       currency: cad,
-      percentageFee: 2.75,
-      flatFee: 1,
+      flatFeeForReceiving: 6,
+      percentageFeeForReceiving: 2.75,
       canBeUsedForSending: false
     });
 
     PaymentMethods.insert({
       name: 'Cash',
       currency: usd,
-      percentageFee: 2,
-      flatFee: 1
+      flatFeeForReceiving: 6,
+      flatFeeForSending: 8
     });
   }
+
+  ExchangeRateProviders.find().forEach(function (provider) {
+    var interval = Meteor.setInterval(function() {
+      ExchangeRates.find({provider: provider._id}).forEach(function (exchangeRate) {
+        var rate = HTTP.get(this + exchangeRate.endpointUrl).data[exchangeRate.jsonKey];
+        var counterCurrency = Currencies.findOne(exchangeRate.counterCurrency);
+
+        ExchangeRates.update(exchangeRate._id, {$set: {rate: parseFloat(accounting.toFixed(rate, counterCurrency.precision))}});
+      }, provider.baseUrl);
+    }, provider.refreshInterval * 1000);
+
+    Meteor.setInterval(function() {
+      var timeBeforeNextRefresh = Math.ceil((interval._idleStart + interval._idleTimeout - Date.now()) / 1000);
+
+      Timers.update(
+        {
+          exchangeRateProvider: provider._id
+        },
+        {
+          $set: {
+            timeBeforeNextRefresh: timeBeforeNextRefresh
+          }
+        }
+      );
+    }, 1000);
+  });
 });

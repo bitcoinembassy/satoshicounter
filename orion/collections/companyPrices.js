@@ -24,9 +24,5 @@ CompanyPrices.attachSchema(new SimpleSchema({
     type: Number,
     label: 'Percentage fee (for sellers)',
     decimal: true
-  },
-  flatFee: {
-    type: Number,
-    decimal: true
   }
 }));

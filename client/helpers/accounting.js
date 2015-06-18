@@ -2,14 +2,10 @@ Template.registerHelper('formatNumber', function(number) {
   return accounting.formatNumber(number, Session.get('counterCurrency.precision'));
 });
 
-Template.registerHelper('formatMainCurrency', function (number) {
-  return accounting.formatMoney(number, { symbol: Session.get('mainCurrency'), format: "%v %s", precision: Session.get('mainCurrencyPrecision') });
+Template.registerHelper('formatBaseCurrency', function (number) {
+  return accounting.formatMoney(number, { symbol: Session.get('baseCurrency.code'), format: "%v %s", precision: Session.get('baseCurrency.precision') });
 });
 
-Template.registerHelper('formatMemberCurrency', function (number) {
-  return accounting.formatMoney(number, { symbol: Session.get('memberCurrency'), format: "%v %s", precision: Session.get('memberCurrencyPrecision') });
-});
-
-Template.registerHelper('formatCompanyCurrency', function (number) {
-  return accounting.formatMoney(number, { symbol: Session.get('companyCurrency'), format: "%v %s", precision: Session.get('companyCurrencyPrecision') });
+Template.registerHelper('formatCounterCurrency', function (number) {
+  return accounting.formatMoney(number, { symbol: Session.get('counterCurrency.code'), format: "%v %s", precision: Session.get('counterCurrency.precision') });
 });
