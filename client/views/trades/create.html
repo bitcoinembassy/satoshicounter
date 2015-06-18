@@ -10,35 +10,67 @@
     <div class="progress-bar" role="progressbar" style="width: {{timeBeforeNextRefresh}}%;"></div>
   </div>
   {{#autoForm collection='Trades' id='insertTradeForm' type='insert'}}
-    <div class="row">
-      <div class="col-md-5">
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountReceived'}}has-error{{/if}}">
-          <div class="input-group input-group-lg">
-            {{> afFieldInput name='amountReceived' value=amountReceived class='form-control' placeholder='Amount you want to send' autofocus=''}}
-            <span class="input-group-addon">{{counterCurrency}}</span>
+    {{#if buyPrice}}
+      <div class="row">
+        <div class="col-md-5">
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountReceived'}}has-error{{/if}}">
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='amountReceived' value=amountReceived class='form-control' placeholder='Amount you want to send' autofocus=''}}
+              <span class="input-group-addon">{{counterCurrency}}</span>
+            </div>
+          </div>
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountReceived'}}has-error{{/if}}">
+            {{> afFieldInput class='form-control input-lg' name='paymentMethodForAmountReceived' firstOption='How do you want to pay?' options=paymentMethodsForAmountReceived}}
           </div>
         </div>
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountReceived'}}has-error{{/if}}">
-          {{> afFieldInput class='form-control input-lg' name='paymentMethodForAmountReceived' firstOption='How do you want to pay?' options=paymentMethodsForAmountReceived}}
+        <div class="col-md-2">
+          <button class="btn btn-default btn-lg center-block" id="switchCurrencies" type="button" style="margin-top: 30px; margin-bottom: 30px">
+            <i class="fa fa-exchange fa-lg"></i>
+          </button>
         </div>
-      </div>
-      <div class="col-md-2">
-        <button type="button" class="btn btn-default btn-lg center-block" id="switchCurrencies" style="margin-top: 30px; margin-bottom: 30px">
-          <i class="fa fa-exchange fa-lg"></i>
-        </button>
-      </div>
-      <div class="col-md-5">
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountSent'}}has-error{{/if}}">
-          <div class="input-group input-group-lg">
-            {{> afFieldInput name='amountSent' value=amountSent step='0.0001' class='form-control' placeholder='Amount you want to receive'}}
-            <span class="input-group-addon">{{baseCurrency}}</span>
+        <div class="col-md-5">
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountSent'}}has-error{{/if}}">
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='amountSent' value=amountSent step='0.0001' class='form-control' placeholder='Amount you want to receive'}}
+              <span class="input-group-addon">{{baseCurrency}}</span>
+            </div>
+          </div>
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountSent'}}has-error{{/if}}">
+            {{> afFieldInput class='form-control input-lg' name='paymentMethodForAmountSent' firstOption='How do you want to get paid?' options=paymentMethodsForAmountSent}}
           </div>
         </div>
-        <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountSent'}}has-error{{/if}}">
-          {{> afFieldInput class='form-control input-lg' name='paymentMethodForAmountSent' firstOption='How do you want to get paid?' options=paymentMethodsForAmountSent}}
+      </div>
+    {{else}}
+      <div class="row">
+        <div class="col-md-5">
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountReceived'}}has-error{{/if}}">
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='amountSent' value=amountSent step='0.0001' class='form-control' placeholder='Amount you want to receive'}}
+              <span class="input-group-addon">{{counterCurrency}}</span>
+            </div>
+          </div>
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountSent'}}has-error{{/if}}">
+            {{> afFieldInput class='form-control input-lg' name='paymentMethodForAmountSent' firstOption='How do you want to get paid?' options=paymentMethodsForAmountSent}}
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-default btn-lg center-block" id="switchCurrencies" type="button" style="margin-top: 30px; margin-bottom: 30px">
+            <i class="fa fa-exchange fa-lg"></i>
+          </button>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='amountSent'}}has-error{{/if}}">
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='amountReceived' value=amountReceived class='form-control' placeholder='Amount you want to send' autofocus=''}}
+              <span class="input-group-addon">{{baseCurrency}}</span>
+            </div>
+          </div>
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='paymentMethodForAmountReceived'}}has-error{{/if}}">
+            {{> afFieldInput class='form-control input-lg' name='paymentMethodForAmountReceived' firstOption='How do you want to pay?' options=paymentMethodsForAmountReceived}}
+          </div>
         </div>
       </div>
-    </div>
+    {{/if}}
     {{#if showMarketValue}}
       <hr>
       <h3 class="text-center">
