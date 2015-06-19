@@ -74,7 +74,11 @@
     {{#if showMarketValue}}
       <hr>
       <h3 class="text-center">
-        {{formatBaseCurrency amountSent}}
+        {{#if buyPrice}}
+          {{formatBaseCurrency amountSent}}
+        {{else}}
+          {{formatBaseCurrency amountReceived}}
+        {{/if}}
         ≈ {{formatCounterCurrency marketValue}}
         <!-- ≈ marketValue USD -->
       </h3>
@@ -87,12 +91,21 @@
     <div class="row">
       <div class="col-xs-8 col-md-4 col-md-offset-2 col-lg-4 col-lg-offset-3">
         <p class="lead">
-          {{formatBaseCurrency amountSent}} @ {{formatCounterCurrency companyPrice}} {{mainCurrency}}
+          {{#if buyPrice}}
+            {{formatBaseCurrency amountSent}}
+          {{else}}
+            {{formatBaseCurrency amountReceived}}
+          {{/if}}
+          @ {{formatCounterCurrency companyPrice}} {{mainCurrency}}
         </p>
       </div>
       <div class="col-xs-4 col-md-4 col-lg-2">
         <p class="lead text-right">
-          {{formatCounterCurrency amountReceivedWithoutFees}}
+          {{#if buyPrice}}
+            {{formatCounterCurrency amountReceivedWithoutFees}}
+          {{else}}
+            {{formatCounterCurrency amountSentWithoutFees}}
+          {{/if}}
         </p>
       </div>
     </div>
@@ -142,7 +155,13 @@
       </div>
       <div class="col-xs-6 col-md-4 col-lg-3">
         <h3 class="text-right">
-          <strong>{{formatCounterCurrency amountReceived}}</strong>
+          <strong>
+            {{#if buyPrice}}
+              {{formatCounterCurrency amountReceived}}
+            {{else}}
+              {{formatCounterCurrency amountSent}}
+            {{/if}}
+          </strong>
         </h3>
       </div>
     </div>

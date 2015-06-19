@@ -22,15 +22,16 @@ Trades.attachSchema(new SimpleSchema({
     type: String,
     label: 'Payment method (for amount received)',
     allowedValues: function() {
-      return PaymentMethods.find().map(function(paymentMethod) {
+      return PaymentMethods.find({canBeUsedForReceiving: true}).map(function(paymentMethod) {
         return paymentMethod._id;
       });
     },
     autoform: {
       type: 'select',
       options: function() {
-        return PaymentMethods.find().map(function(paymentMethod) {
-          return {label: paymentMethod.name, value: paymentMethod._id};
+        return PaymentMethods.find({canBeUsedForReceiving: true}).map(function(paymentMethod) {
+          var currency = Currencies.findOne(paymentMethod.currency);
+          return {label: paymentMethod.name + ' (' + currency.code + ')', value: paymentMethod._id};
         });
       }
     }
@@ -44,15 +45,16 @@ Trades.attachSchema(new SimpleSchema({
     type: String,
     label: 'Payment method (for amount sent)',
     allowedValues: function() {
-      return PaymentMethods.find().map(function(paymentMethod) {
+      return PaymentMethods.find({canBeUsedForSending: true}).map(function(paymentMethod) {
         return paymentMethod._id;
       });
     },
     autoform: {
       type: 'select',
       options: function() {
-        return PaymentMethods.find().map(function(paymentMethod) {
-          return {label: paymentMethod.name, value: paymentMethod._id};
+        return PaymentMethods.find({canBeUsedForSending: true}).map(function(paymentMethod) {
+          var currency = Currencies.findOne(paymentMethod.currency);
+          return {label: paymentMethod.name + ' (' + currency.code + ')', value: paymentMethod._id};
         });
       }
     }
