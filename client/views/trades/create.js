@@ -5,14 +5,6 @@ Template.tradesCreate.onCreated(function () {
 
   Session.set('priceType', priceType);
 
-  Session.setDefault('paymentMethodForAmountReceived.flatFee', 0);
-  Session.setDefault('paymentMethodForAmountReceived.calculatedFee', 0)
-
-  Session.setDefault('paymentMethodForAmountSent.flatFee', 0);
-
-  Session.setDefault('flatFee', 0);
-  Session.setDefault('salesTax', 0);
-
   var companyPriceSubscription = this.subscribe('companyPrice', baseCurrencySlug, counterCurrencySlug);
 
   this.autorun(function () {
@@ -43,11 +35,13 @@ Template.tradesCreate.onCreated(function () {
       Session.set('marketPriceProvider', exchangeRateProvider.name);
       Session.set('companyPrice', parseFloat(accounting.toFixed(calculatedCompanyPrice, 2)));
 
+      Session.set('baseCurrency', baseCurrency._id);
       Session.set('baseCurrency.code', baseCurrency.code);
       Session.set('baseCurrency.denomination', baseCurrency.denomination);
       Session.set('baseCurrency.slug', baseCurrency.slug);
       Session.set('baseCurrency.precision', baseCurrency.precision);
 
+      Session.set('counterCurrency', counterCurrency._id);
       Session.set('counterCurrency.code', counterCurrency.code);
       Session.set('counterCurrency.slug', counterCurrency.slug);
       Session.set('counterCurrency.precision', counterCurrency.precision);
@@ -56,6 +50,46 @@ Template.tradesCreate.onCreated(function () {
       Session.set('exchangeRateProvider.refreshInterval', exchangeRateProvider.refreshInterval);
     }
   });
+
+  this.autorun(function() {
+    Session.set('amountReceived', undefined);
+    Session.set('amountSent', undefined);
+
+    Session.set('paymentMethodForAmountReceived.name', undefined);
+    Session.set('paymentMethodForAmountReceived.percentageFee', undefined);
+    Session.set('paymentMethodForAmountReceived.calculatedFee', undefined);
+
+    if (Session.get('priceType') === 'buy') {
+      console.log('test')
+      var paymentMethodForAmountReceived = PaymentMethods.findOne({currency: Session.get('counterCurrency'), canBeUsedForReceiving: true});
+      var paymentMethodForAmountSent = PaymentMethods.findOne({currency: Session.get('baseCurrency'), canBeUsedForSending: true});
+
+      if (paymentMethodForAmountReceived && paymentMethodForAmountSent) {
+        Session.set('paymentMethodForAmountReceived', paymentMethodForAmountReceived._id);
+        Session.set('paymentMethodForAmountReceived.flatFee', paymentMethodForAmountReceived.flatFeeForReceiving);
+
+        Session.set('paymentMethodForAmountSent', paymentMethodForAmountSent._id);
+        Session.set('paymentMethodForAmountSent.flatFee', paymentMethodForAmountSent.flatFeeForSending);
+
+        Session.set('flatFee', paymentMethodForAmountReceived.flatFeeForReceiving + paymentMethodForAmountSent.flatFeeForSending);
+        Session.set('salesTax', 0);
+      }
+    } else {
+      var paymentMethodForAmountReceived = PaymentMethods.findOne({currency: Session.get('baseCurrency'), canBeUsedForReceiving: true});
+      var paymentMethodForAmountSent = PaymentMethods.findOne({currency: Session.get('counterCurrency'), canBeUsedForSending: true});
+
+      if (paymentMethodForAmountReceived && paymentMethodForAmountSent) {
+        Session.set('paymentMethodForAmountReceived', paymentMethodForAmountReceived._id);
+        Session.set('paymentMethodForAmountReceived.flatFee', paymentMethodForAmountReceived.flatFeeForReceiving);
+
+        Session.set('paymentMethodForAmountSent', paymentMethodForAmountSent._id);
+        Session.set('paymentMethodForAmountSent.flatFee', paymentMethodForAmountSent.flatFeeForSending);
+
+        Session.set('flatFee', paymentMethodForAmountReceived.flatFeeForReceiving + paymentMethodForAmountSent.flatFeeForSending);
+        Session.set('salesTax', 0);
+      }
+    }
+  })
 });
 
 Template.tradesCreate.helpers({
@@ -86,6 +120,9 @@ Template.tradesCreate.helpers({
   amountReceived: function () {
     return Session.get('amountReceived');
   },
+  paymentMethodForAmountReceived: function() {
+    return Session.get('paymentMethodForAmountReceived');
+  },
   paymentMethodsForAmountReceived: function () {
     return PaymentMethods.find({currency: Session.get('currencyForAmountReceived'), canBeUsedForReceiving: true}).map(function(paymentMethod) {
       return {label: paymentMethod.name, value: paymentMethod._id};
@@ -93,6 +130,9 @@ Template.tradesCreate.helpers({
   },
   amountSent: function () {
     return Session.get('amountSent');
+  },
+  paymentMethodForAmountSent: function() {
+    return Session.get('paymentMethodForAmountSent');
   },
   paymentMethodsForAmountSent: function () {
     return PaymentMethods.find({currency: Session.get('currencyForAmountSent'), canBeUsedForSending: true}).map(function(paymentMethod) {
@@ -116,7 +156,7 @@ Template.tradesCreate.helpers({
   },
   showReceipt: function () {
     if (Session.get('amountSent') > 0 && Session.get('amountReceived') > 0) {
-      if (Session.get('paymentMethodForAmountReceived.name') && Session.get('paymentMethodForAmountSent.name')) {
+      if (Session.get('paymentMethodForAmountReceived') && Session.get('paymentMethodForAmountSent')) {
         return true;
       }
     }
@@ -133,7 +173,7 @@ Template.tradesCreate.helpers({
   salesTax: function () {
     return Session.get('salesTax');
   },
-  paymentMethodForAmountReceived: function () {
+  paymentMethodNameForAmountReceived: function () {
     return Session.get('paymentMethodForAmountReceived.name');
   },
   percentageFeeForAmountReceived: function () {
@@ -171,6 +211,7 @@ Template.tradesCreate.events({
             var calculatedFee = amountReceived - amountReceivedWithoutFees - flatFee - salesTax;
 
             Session.set('amountReceivedWithoutFees', parseFloat(accounting.toFixed(amountReceivedWithoutFees, 2)));
+            console.log(calculatedFee)
             Session.set('paymentMethodForAmountReceived.calculatedFee', parseFloat(accounting.toFixed(calculatedFee, 2)));
           } else {
             var amountReceivedWithoutFees = amountReceived - flatFee - salesTax;
@@ -285,16 +326,19 @@ Template.tradesCreate.events({
     var paymentMethod = PaymentMethods.findOne(event.target.value);
 
     if (paymentMethod) {
+      Session.set('paymentMethodForAmountReceived', paymentMethod._id);
       Session.set('paymentMethodForAmountReceived.name', paymentMethod.name.toLowerCase());
       Session.set('paymentMethodForAmountReceived.flatFee', paymentMethod.flatFeeForReceiving);
       Session.set('paymentMethodForAmountReceived.percentageFee', paymentMethod.percentageFeeForReceiving);
 
       var flatFee = paymentMethod.flatFeeForReceiving + Session.get('paymentMethodForAmountSent.flatFee');
-      var salesTax = parseFloat(accounting.toFixed(flatFee * 0.05 + flatFee * 0.09975, Session.get('counterCurrency.precision')));
+      var salesTax = 0;
+      // var salesTax = parseFloat(accounting.toFixed(flatFee * 0.05 + flatFee * 0.09975, Session.get('counterCurrency.precision')));
 
       Session.set('flatFee', flatFee);
       Session.set('salesTax', salesTax);
     } else {
+      Session.set('paymentMethodForAmountReceived', undefined);
       Session.set('paymentMethodForAmountReceived.name', undefined);
       Session.set('paymentMethodForAmountReceived.flatFee', 0);
 
@@ -340,16 +384,17 @@ Template.tradesCreate.events({
     var paymentMethod = PaymentMethods.findOne(event.target.value);
 
     if (paymentMethod) {
-      Session.set('paymentMethodForAmountSent.name', paymentMethod.name.toLowerCase());
+      Session.set('paymentMethodForAmountSent', paymentMethod._id);
       Session.set('paymentMethodForAmountSent.flatFee', paymentMethod.flatFeeForSending);
 
       var flatFee = Session.get('paymentMethodForAmountReceived.flatFee') + paymentMethod.flatFeeForSending;
-      var salesTax = parseFloat(accounting.toFixed(flatFee * 0.05 + flatFee * 0.09975, Session.get('counterCurrency.precision')));
+      var salesTax = 0;
+      // var salesTax = parseFloat(accounting.toFixed(flatFee * 0.05 + flatFee * 0.09975, Session.get('counterCurrency.precision')));
 
       Session.set('flatFee', flatFee);
       Session.set('salesTax', salesTax);
     } else {
-      Session.set('paymentMethodForAmountSent.name', undefined);
+      Session.set('paymentMethodForAmountSent', undefined);
       Session.set('paymentMethodForAmountSent.flatFee', 0);
 
       var flatFee = 0;
@@ -390,20 +435,6 @@ Template.tradesCreate.events({
     } else if (priceType === 'sell') {
       Session.set('priceType', 'buy');
     }
-
-    Session.set('amountReceived', undefined);
-    Session.set('amountSent', undefined);
-
-    Session.set('paymentMethodForAmountReceived.name', undefined);
-    Session.set('paymentMethodForAmountSent.name', undefined);
-
-    Session.set('paymentMethodForAmountReceived.flatFee', 0);
-    Session.set('paymentMethodForAmountSent.flatFee', 0);
-
-    Session.set('paymentMethodForAmountReceived.calculatedFee', undefined);
-
-    Session.set('flatFee', 0);
-    Session.set('salesTax', 0);
 
     Router.go('/' + Session.get('priceType') + '-' + Session.get('baseCurrency.slug') + '/' + Session.get('counterCurrency.slug'));
   },

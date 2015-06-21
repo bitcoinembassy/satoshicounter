@@ -1,14 +1,8 @@
 <template name="home">
   <img class="img-responsive center-block" src="bitcoin_logo.png" style="margin-top: 50px">
   <hr>
-  <div class="row text-center">
-    <div class="col-sm-6">
-      <a class="btn btn-primary btn-lg btn-block" href="/buy-bitcoins/canadian-dollars">Buy</a>
-      <!-- <strong style="font-size: 5vw">$311.08</strong> -->
-    </div>
-    <div class="col-sm-6">
-      <a class="btn btn-primary btn-lg btn-block" href="/sell-bitcoins/canadian-dollars">Sell</a>
-      <!-- <strong style="font-size: 5vw">$270.14</strong> -->
-    </div>
+  <div class="btn-group btn-group-lg btn-group-justified" role="group">
+    <a href="/buy-bitcoins/canadian-dollars" class="btn btn-primary" role="button">Buy</a>
+    <a href="/sell-bitcoins/canadian-dollars" class="btn btn-primary" role="button">Sell</a>
   </div>
 </template>
