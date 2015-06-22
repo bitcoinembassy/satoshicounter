@@ -175,30 +175,47 @@
       <div class="row">
         <div class="col-lg-5">
           <div class="form-group form-group-lg {{#if afFieldIsInvalid name='memberNumber'}}has-error{{/if}}">
-            <div class="input-group input-group-lg">
-              {{> afFieldInput name='memberNumber' class='form-control' placeholder='What is your member number?'}}
-              <span class="input-group-btn">
-                <button class="btn btn-default" id="findMember" type="button">Confirm</button>
-              </span>
-            </div>
+            {{> afFieldInput name='memberNumber' value=memberNumber class='form-control input-lg' placeholder='What is your member number?'}}
           </div>
         </div>
         <div class="col-lg-2">
-          <button type="button" class="btn btn-default btn-lg center-block" id="addNewUser">
+          <button type="button" class="btn btn-default btn-lg center-block" id="addNewMember">
             <i class="fa fa-user-plus fa-lg"></i>
           </button>
         </div>
         <div class="col-lg-5">
-          {{#if memberFound}}
+          {{#if memberNumber}}
           <div class="form-group form-group-lg">
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Submit Trade</button>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Insert trade</button>
           </div>
           {{/if}}
         </div>
       </div>
     {{/if}}
   {{/autoForm}}
-  {{#autoForm collection='Members' id='insertUserForm' type='insert'}}
-    <!-- <h1>test</h1> -->
-  {{/autoForm}}
+  {{#if showMemberForm}}
+    {{#autoForm collection='Members' id='insertMemberForm' type='insert'}}
+      <div class="row">
+        <div class="col-lg-5">
+          {{> afQuickField name='firstName'}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-5">
+          {{> afQuickField name='lastName'}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-5">
+          {{> afQuickField name='phoneNumber'}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-5">
+          {{> afQuickField name='email'}}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Insert member</button>
+    {{/autoForm}}
+  {{/if}}
 </template>

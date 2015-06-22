@@ -60,7 +60,6 @@ Template.tradesCreate.onCreated(function () {
     Session.set('paymentMethodForAmountReceived.calculatedFee', undefined);
 
     if (Session.get('priceType') === 'buy') {
-      console.log('test')
       var paymentMethodForAmountReceived = PaymentMethods.findOne({currency: Session.get('counterCurrency'), canBeUsedForReceiving: true});
       var paymentMethodForAmountSent = PaymentMethods.findOne({currency: Session.get('baseCurrency'), canBeUsedForSending: true});
 
@@ -185,8 +184,14 @@ Template.tradesCreate.helpers({
   calculatedFeeForAmountSent: function () {
     return Session.get('companyPaymentMethodFee');
   },
+  memberNumber: function() {
+    return Session.get('memberNumber');
+  },
   memberFound: function () {
     return Session.get('memberFound');
+  },
+  showMemberForm: function() {
+    return Session.get('showMemberForm');
   }
 });
 
@@ -438,15 +443,22 @@ Template.tradesCreate.events({
 
     Router.go('/' + Session.get('priceType') + '-' + Session.get('baseCurrency.slug') + '/' + Session.get('counterCurrency.slug'));
   },
-  'click #findMember': function() {
-    var memberNumber = AutoForm.getFieldValue('memberNumber', 'insertTradeForm');
-    var member = Meteor.call('findMember', memberNumber, function (error, result) {
-      if (error) {
-        Session.set('memberFound', false);
-      } else {
-        Session.set('memberFound', true);
-      }
-    });
+  'input [name=memberNumber]': function() {
+    var memberNumber = parseInt(event.target.value);
+    if (isNaN(memberNumber)) {
+      Session.set('memberNumber', undefined);
+    } else {
+      Meteor.call('findMember', memberNumber, function (error, result) {
+        if (error) {
+          Session.set('memberNumber', undefined);
+        } else {
+          Session.set('memberNumber', memberNumber);
+        }
+      });
+    }
+  },
+  'click #addNewMember': function() {
+    Session.set('showMemberForm', true);
   },
   'click input[type=number]': function (event) {
     $(event.target).select();
@@ -458,6 +470,14 @@ AutoForm.hooks({
     onSuccess: function (formType, result) {
       console.log(result);
       Router.go('/');
+    }
+  },
+  insertMemberForm: {
+    onSuccess: function (formType, result) {
+      Session.set('showMemberForm', false);
+      Meteor.call('findMemberNumber', result, function (error, result) {
+        Session.set('memberNumber', result);
+      });
     }
   }
 });
