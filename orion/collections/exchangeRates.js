@@ -25,5 +25,6 @@ ExchangeRates.attachSchema(new SimpleSchema({
   rate: {
     type: Number,
     decimal: true
-  }
+  },
+  updatedAt: orion.attribute('updatedAt')
 }));

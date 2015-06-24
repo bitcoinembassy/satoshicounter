@@ -16,7 +16,6 @@ Template.tradesCreate.onCreated(function () {
       var companyPrice = CompanyPrices.findOne({baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
       var exchangeRate = ExchangeRates.findOne({provider: companyPrice.exchangeRateProvider, baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
       var exchangeRateProvider = ExchangeRateProviders.findOne(companyPrice.exchangeRateProvider);
-      var timer = Timers.findOne({exchangeRateProvider: companyPrice.exchangeRateProvider});
 
       var priceType = Session.get('priceType');
 
@@ -35,6 +34,9 @@ Template.tradesCreate.onCreated(function () {
       Session.set('marketPrice', exchangeRate.rate);
       Session.set('marketPriceProvider', exchangeRateProvider.name);
       Session.set('companyPrice', parseFloat(accounting.toFixed(calculatedCompanyPrice, 2)));
+      Session.set('lastPriceUpdate', exchangeRate.updatedAt);
+      Session.set('progress', moment().diff(exchangeRate.updatedAt) / 1000);
+      Session.set('priceRefreshInterval', exchangeRateProvider.refreshInterval);
 
       Session.set('baseCurrency', baseCurrency._id);
       Session.set('baseCurrency.code', baseCurrency.code);
@@ -46,11 +48,13 @@ Template.tradesCreate.onCreated(function () {
       Session.set('counterCurrency.code', counterCurrency.code);
       Session.set('counterCurrency.slug', counterCurrency.slug);
       Session.set('counterCurrency.precision', counterCurrency.precision);
-
-      Session.set('timer.timeBeforeNextRefresh', timer.timeBeforeNextRefresh);
-      Session.set('exchangeRateProvider.refreshInterval', exchangeRateProvider.refreshInterval);
     }
   });
+
+  Meteor.setInterval(function () {
+    var progress = moment().diff(Session.get('lastPriceUpdate')) / 1000;
+    Session.set('progress', progress);
+  }, 5000);
 
   this.autorun(function() {
     Session.set('amountReceived', undefined);
@@ -114,8 +118,8 @@ Template.tradesCreate.helpers({
   counterCurrency: function () {
     return Session.get('counterCurrency.code');
   },
-  timeBeforeNextRefresh: function () {
-    return 100 - Session.get('timer.timeBeforeNextRefresh') / Session.get('exchangeRateProvider.refreshInterval') * 100;
+  progressBar: function () {
+    return Session.get('progress') / Session.get('priceRefreshInterval') * 100;
   },
   amountReceived: function () {
     return Session.get('amountReceived');

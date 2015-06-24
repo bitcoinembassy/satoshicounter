@@ -19,11 +19,6 @@ Meteor.publishComposite('companyPrice', function (baseCurrencySlug, counterCurre
         find: function (companyPrice) {
           return ExchangeRateProviders.find(companyPrice.exchangeRateProvider);
         }
-      },
-      {
-        find: function (companyPrice) {
-          return Timers.find({exchangeRateProvider: companyPrice.exchangeRateProvider});
-        }
       }
     ]
   }

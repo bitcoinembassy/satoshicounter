@@ -43,14 +43,6 @@ Meteor.startup(function() {
       baseUrl: 'https://api.coinbase.com'
     });
 
-    Timers.insert({
-      exchangeRateProvider: bitPay
-    });
-
-    Timers.insert({
-      exchangeRateProvider: coinbase
-    });
-
     var bitPayRateCad = HTTP.get('https://bitpay.com/api/rates/cad').data['rate'];
     var bitPayRateUsd = HTTP.get('https://bitpay.com/api/rates/usd').data['rate'];
 
@@ -147,7 +139,7 @@ Meteor.startup(function() {
   }
 
   ExchangeRateProviders.find().forEach(function (provider) {
-    var interval = Meteor.setInterval(function() {
+    Meteor.setInterval(function() {
       ExchangeRates.find({provider: provider._id}).forEach(function (exchangeRate) {
         var rate = HTTP.get(this + exchangeRate.endpointUrl).data[exchangeRate.jsonKey];
         var counterCurrency = Currencies.findOne(exchangeRate.counterCurrency);
@@ -155,20 +147,5 @@ Meteor.startup(function() {
         ExchangeRates.update(exchangeRate._id, {$set: {rate: parseFloat(accounting.toFixed(rate, counterCurrency.precision))}});
       }, provider.baseUrl);
     }, provider.refreshInterval * 1000);
-
-    Meteor.setInterval(function() {
-      var timeBeforeNextRefresh = Math.ceil((interval._idleStart + interval._idleTimeout - Date.now()) / 1000);
-
-      Timers.update(
-        {
-          exchangeRateProvider: provider._id
-        },
-        {
-          $set: {
-            timeBeforeNextRefresh: timeBeforeNextRefresh
-          }
-        }
-      );
-    }, 2000);
   });
 });

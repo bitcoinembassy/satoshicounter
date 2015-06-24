@@ -3,7 +3,7 @@
     <strong>{{formatNumber companyPrice}}</strong> <small>{{counterCurrency}}</small>
   </h1>
   <div class="progress" style="height: 5px; margin-bottom: 35px">
-    <div class="progress-bar" role="progressbar" style="width: {{timeBeforeNextRefresh}}%;"></div>
+    <div class="progress-bar" role="progressbar" style="width: {{progressBar}}%;"></div>
   </div>
   {{#autoForm collection='Trades' id='insertTradeForm' type='insert'}}
     {{#if buyPrice}}
