@@ -1,20 +1,9 @@
 Members.attachSchema(new SimpleSchema({
   number: {
     type: Number,
-    unique: true,
-    optional: true,
-    autoValue: function() {
-      if (Meteor.isServer) {
-        if (this.isInsert) {
-          return incrementCounter('_counters', 'members');
-        } else {
-          this.unset();
-        }
-      }
-    },
-    autoform: {
-      omit: true
-    }
+    min: 1000,
+    max: 100000,
+    unique: true
   },
   firstName: {
     type: String
@@ -25,6 +14,8 @@ Members.attachSchema(new SimpleSchema({
   phoneNumber: {
     type: String,
     regEx: /^\d{3}-\d{3}-\d{4}$/,
+    unique: true,
+    optional: true,
     autoform: {
       afFieldInput: {
         type: 'tel'
@@ -37,14 +28,24 @@ Members.attachSchema(new SimpleSchema({
     unique: true,
     optional: true
   },
-  createdAt: orion.attribute('createdAt'),
   level: {
     type: Number,
     allowedValues: [1, 2, 3],
     defaultValue: 1,
     autoform: {
-      type: "select-radio-inline"
+      type: 'select-radio-inline'
     }
+  },
+  idType: {
+    type: String,
+    label: 'ID type',
+    optional: true,
+    allowedValues: ['Driver\'s license', 'Health insurance card']
+  },
+  idNumber: {
+    type: String,
+    label: 'ID number',
+    optional: true
   },
   notes: {
     type: String,
@@ -53,22 +54,5 @@ Members.attachSchema(new SimpleSchema({
       rows: 5
     }
   },
-  idType: {
-    type: String,
-    label: "ID type",
-    optional: true,
-    allowedValues: ['driversLicense', 'healthInsuranceCard'],
-    autoform: {
-      type: "select-radio-inline",
-      options: {
-        driversLicense: "Driver's license",
-        healthInsuranceCard: "Health insurance card"
-      }
-    }
-  },
-  idNumber: {
-    type: String,
-    label: "ID number",
-    optional: true
-  }
+  createdAt: orion.attribute('createdAt')
 }));

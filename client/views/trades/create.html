@@ -197,6 +197,11 @@
     {{#autoForm collection='Members' id='insertMemberForm' type='insert'}}
       <div class="row">
         <div class="col-lg-5">
+          {{> afQuickField name='number' value=newMemberNumber}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-5">
           {{> afQuickField name='firstName'}}
         </div>
       </div>

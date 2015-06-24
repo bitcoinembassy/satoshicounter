@@ -187,11 +187,11 @@ Template.tradesCreate.helpers({
   memberNumber: function() {
     return Session.get('memberNumber');
   },
-  memberFound: function () {
-    return Session.get('memberFound');
-  },
   showMemberForm: function() {
     return Session.get('showMemberForm');
+  },
+  newMemberNumber: function() {
+    return Session.get('newMemberNumber');
   }
 });
 
@@ -458,7 +458,10 @@ Template.tradesCreate.events({
     }
   },
   'click #addNewMember': function() {
-    Session.set('showMemberForm', true);
+    Meteor.call('newMemberNumber', function (error, result) {
+      Session.set('newMemberNumber', result);
+      Session.set('showMemberForm', true);
+    });
   },
   'click input[type=number]': function (event) {
     $(event.target).select();

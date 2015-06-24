@@ -1,7 +1,5 @@
 Meteor.startup(function() {
   if (Members.find().count() === 0) {
-    setCounter('_counters', 'members', 1000);
-
     Members.insert({
       firstName: 'Francis',
       lastName: 'Brunelle',
