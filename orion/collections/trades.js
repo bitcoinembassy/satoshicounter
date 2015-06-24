@@ -1,7 +1,12 @@
 Trades.attachSchema(new SimpleSchema({
-  baseCurrency: {
-    type: String
-  },
+  baseCurrency: orion.attribute('hasOne', {}, {
+    collection: Currencies,
+    titleField: 'name',
+    publicationName: 'tradeBaseCurrency'
+  }),
+  // baseCurrency: {
+  //   type: String
+  // },
   counterCurrency: {
     type: String
   },
@@ -75,6 +80,11 @@ Trades.attachSchema(new SimpleSchema({
     //   }
     // }
   },
+  // member: orion.attribute('hasOne', {}, {
+  //   collection: Members,
+  //   titleField: 'number',
+  //   publicationName: 'tradeMember'
+  // }),
   memberNumber: {
     type: Number
   },

@@ -3,7 +3,12 @@ Members.attachSchema(new SimpleSchema({
     type: Number,
     min: 1000,
     max: 100000,
-    unique: true
+    unique: true,
+    autoValue: function() {
+      if (this.isUpdate) {
+        this.unset();
+      }
+    }
   },
   firstName: {
     type: String

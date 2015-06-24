@@ -1,11 +1,16 @@
 Meteor.startup(function() {
   if (Members.find().count() === 0) {
-    Members.insert({
-      firstName: 'Francis',
-      lastName: 'Brunelle',
-      phoneNumber: '579-488-0793',
-      email: 'frabrunelle@gmail.com'
+    var data = JSON.parse(Assets.getText("members.json"));
+
+    data.forEach(function (item) {
+      Members.insert(item);
     });
+    // Members.insert({
+    //   firstName: 'Francis',
+    //   lastName: 'Brunelle',
+    //   phoneNumber: '579-488-0793',
+    //   email: 'frabrunelle@gmail.com'
+    // });
   }
 
   if (Currencies.find().count() === 0) {

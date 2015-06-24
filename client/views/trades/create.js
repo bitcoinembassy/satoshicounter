@@ -4,6 +4,7 @@ Template.tradesCreate.onCreated(function () {
   var counterCurrencySlug = Router.current().params.counterCurrency;
 
   Session.set('priceType', priceType);
+  Session.set('showMemberForm', false);
 
   var companyPriceSubscription = this.subscribe('companyPrice', baseCurrencySlug, counterCurrencySlug);
 
@@ -184,13 +185,22 @@ Template.tradesCreate.helpers({
   calculatedFeeForAmountSent: function () {
     return Session.get('companyPaymentMethodFee');
   },
-  memberNumber: function() {
+  memberNumber: function () {
     return Session.get('memberNumber');
   },
-  showMemberForm: function() {
+  memberName: function () {
+    return Session.get('memberName');
+  },
+  memberPhoneNumber: function () {
+    return Session.get('memberPhoneNumber');
+  },
+  memberEmail: function () {
+    return Session.get('memberEmail');
+  },
+  showMemberForm: function () {
     return Session.get('showMemberForm');
   },
-  newMemberNumber: function() {
+  newMemberNumber: function () {
     return Session.get('newMemberNumber');
   }
 });
@@ -452,16 +462,23 @@ Template.tradesCreate.events({
         if (error) {
           Session.set('memberNumber', undefined);
         } else {
-          Session.set('memberNumber', memberNumber);
+          Session.set('memberNumber', result.number);
+          Session.set('memberName', result.firstName + ' ' + result.lastName);
+          Session.set('memberPhoneNumber', result.phoneNumber);
+          Session.set('memberEmail', result.email);
         }
       });
     }
   },
   'click #addNewMember': function() {
-    Meteor.call('newMemberNumber', function (error, result) {
-      Session.set('newMemberNumber', result);
-      Session.set('showMemberForm', true);
-    });
+    if (Session.equals('showMemberForm', false)) {
+      Meteor.call('newMemberNumber', function (error, result) {
+        Session.set('newMemberNumber', result);
+        Session.set('showMemberForm', true);
+      });
+    } else {
+      Session.set('showMemberForm', false);
+    }
   },
   'click input[type=number]': function (event) {
     $(event.target).select();
