@@ -1,6 +1,6 @@
 Trades.attachSchema(new SimpleSchema({
   priceType: {
-    type: String
+    type: String,
     allowedValues: ['buy', 'sell']
   },
   baseCurrency: orion.attribute('hasOne', {}, {
