@@ -77,7 +77,7 @@ msavin:jetsetter@1.0.18
 msavin:mongol@1.0.98
 nicolaslopezj:options@1.0.1
 nicolaslopezj:reactive-templates@1.2.1
-nicolaslopezj:roles@1.1.1
+nicolaslopezj:roles@1.1.2
 npm-bcrypt@0.7.8_2
 observe-sequence@1.0.6
 ongoworks:speakingurl@5.0.1
@@ -85,7 +85,7 @@ ordered-dict@1.0.3
 orionjs:accounts@1.1.0
 orionjs:attributes@1.1.0
 orionjs:base@1.1.2
-orionjs:bootstrap@1.1.1
+orionjs:bootstrap@1.1.2
 orionjs:collections@1.1.0
 orionjs:config@1.1.2
 orionjs:core@1.1.0
