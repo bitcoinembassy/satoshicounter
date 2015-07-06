@@ -21,18 +21,20 @@ Template.tradesCreate.onCreated(function () {
       if (priceType === 'buy') {
         var calculatedCompanyPrice = exchangeRate.rate * (1 + companyPrice.percentageFeeForBuyers / 100);
 
+        Session.set('percentageFee', companyPrice.percentageFeeForBuyers);
         Session.set('currencyForAmountReceived', counterCurrency._id);
         Session.set('currencyForAmountSent', baseCurrency._id);
       } else if (priceType === 'sell') {
         var calculatedCompanyPrice = exchangeRate.rate * (1 + companyPrice.percentageFeeForSellers / 100);
 
+        Session.set('percentageFee', companyPrice.percentageFeeForSellers);
         Session.set('currencyForAmountReceived', baseCurrency._id);
         Session.set('currencyForAmountSent', counterCurrency._id);
       }
 
       Session.set('companyPrice', parseFloat(accounting.toFixed(calculatedCompanyPrice, 2)));
       Session.set('exchangeRate', exchangeRate.rate);
-      Session.set('exchangeRateProvider', exchangeRateProvider.name);
+      Session.set('exchangeRateProvider', exchangeRateProvider._id);
 
       Session.set('lastPriceUpdate', exchangeRate.updatedAt);
       Session.set('progress', moment().diff(exchangeRate.updatedAt) / 1000);
@@ -76,25 +78,39 @@ Template.tradesCreate.onDestroyed(function () {
 });
 
 Template.tradesCreate.helpers({
-  priceType: function () {
-    var priceType = Session.get('priceType');
-    return priceType.charAt(0).toUpperCase() + priceType.substring(1);
-  },
   companyPrice: function () {
     return Session.get('companyPrice');
+  },
+  priceType: function () {
+    return Session.get('priceType');
+  },
+  baseCurrency: function () {
+    return Session.get('baseCurrency');
+  },
+  counterCurrency: function () {
+    return Session.get('counterCurrency');
+  },
+  exchangeRateProvider: function () {
+    return Session.get('exchangeRateProvider');
+  },
+  exchangeRate: function () {
+    return Session.get('exchangeRate');
+  },
+  percentageFee: function () {
+    return Session.get('percentageFee');
   },
   buyPrice: function () {
     if (Session.equals('priceType', 'buy')) {
       return true;
     }
   },
-  baseCurrency: function () {
+  baseCurrencyCode: function () {
     return Session.get('baseCurrency.code');
   },
   baseCurrencyDenomination: function () {
     return Session.get('baseCurrency.denomination');
   },
-  counterCurrency: function () {
+  counterCurrencyCode: function () {
     return Session.get('counterCurrency.code');
   },
   progressBar: function () {
@@ -186,7 +202,8 @@ Template.tradesCreate.helpers({
     if (marketPriceProvider != undefined) {
       return marketPriceProvider;
     } else {
-      Session.set('marketPriceProvider', Session.get('exchangeRateProvider'));
+      var exchangeRateProvider = ExchangeRateProviders.findOne(Session.get('exchangeRateProvider'));
+      Session.set('marketPriceProvider', exchangeRateProvider.name);
     }
   },
   showReceipt: function () {
@@ -222,6 +239,9 @@ Template.tradesCreate.helpers({
   },
   memberNumber: function () {
     return Session.get('memberNumber');
+  },
+  member: function () {
+    return Session.get('member');
   },
   memberName: function () {
     return Session.get('memberName');
@@ -492,10 +512,9 @@ Template.tradesCreate.events({
   },
   'change [name=marketValueCurrency]': function (event) {
     var currency = Currencies.findOne(event.target.value);
-    console.log(currency)
     var companyPrice = CompanyPrices.findOne({counterCurrency: currency._id});
-    var exchangeRateProvider = companyPrice.exchangeRateProvider;
-    var exchangeRate = ExchangeRates.findOne({provider: exchangeRateProvider, counterCurrency: currency._id});
+    var exchangeRate = ExchangeRates.findOne({provider: companyPrice.exchangeRateProvider, counterCurrency: currency._id});
+    var exchangeRateProvider = ExchangeRateProviders.findOne(companyPrice.exchangeRateProvider);
 
     Session.set('marketPrice', exchangeRate.rate);
     Session.set('marketPriceCurrency', currency._id);
@@ -505,8 +524,9 @@ Template.tradesCreate.events({
     var memberNumber = parseInt(event.target.value);
     if (isNaN(memberNumber)) {
       Session.set('memberNumber', undefined);
+      Session.set('member', undefined);
     } else {
-      Meteor.call('findMember', memberNumber, function (error, result) {
+      Meteor.call('findMemberByName', memberNumber, function (error, result) {
         if (error) {
           Session.set('memberNumber', undefined);
         } else {
@@ -514,6 +534,7 @@ Template.tradesCreate.events({
           Session.set('memberName', result.firstName + ' ' + result.lastName);
           Session.set('memberPhoneNumber', result.phoneNumber);
           Session.set('memberEmail', result.email);
+          Session.set('member', result._id);
         }
       });
     }
@@ -536,15 +557,18 @@ Template.tradesCreate.events({
 AutoForm.hooks({
   insertTradeForm: {
     onSuccess: function (formType, result) {
-      console.log(result);
-      Router.go('/');
+      Router.go('/admin/trades/' + result);
     }
   },
   insertMemberForm: {
     onSuccess: function (formType, result) {
       Session.set('showMemberForm', false);
-      Meteor.call('findMemberNumber', result, function (error, result) {
-        Session.set('memberNumber', result);
+      Meteor.call('findMemberById', result, function (error, result) {
+        Session.set('memberNumber', result.number);
+        Session.set('memberName', result.firstName + ' ' + result.lastName);
+        Session.set('memberPhoneNumber', result.phoneNumber);
+        Session.set('memberEmail', result.email);
+        Session.set('member', result._id);
       });
     }
   }
