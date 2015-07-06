@@ -7,12 +7,12 @@ Meteor.publishComposite('companyPrice', function (baseCurrencySlug, counterCurre
 
   return {
     find: function () {
-      return CompanyPrices.find({baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
+      return CompanyPrices.find({baseCurrency: baseCurrency._id});
     },
     children: [
       {
         find: function (companyPrice) {
-          return ExchangeRates.find({provider: companyPrice.exchangeRateProvider, baseCurrency: baseCurrency._id, counterCurrency: counterCurrency._id});
+          return ExchangeRates.find({provider: companyPrice.exchangeRateProvider, baseCurrency: companyPrice.baseCurrency, counterCurrency: companyPrice.counterCurrency});
         }
       },
       {

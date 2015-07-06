@@ -62,7 +62,7 @@ Meteor.startup(function() {
       provider: bitPay,
       baseCurrency: btc,
       counterCurrency: usd,
-      endpointUrl: '/rates/cad',
+      endpointUrl: '/rates/usd',
       jsonKey: 'rate',
       rate: parseFloat(accounting.toFixed(bitPayRateUsd, Currencies.findOne(usd).precision))
     });

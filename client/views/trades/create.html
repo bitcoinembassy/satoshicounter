@@ -20,7 +20,7 @@
           </div>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-default btn-lg center-block" id="switchCurrencies" type="button" style="margin-bottom: 25px">
+          <button class="btn btn-default btn-lg center-block" id="switchPriceType" type="button" style="margin-bottom: 25px">
             <i class="fa fa-exchange fa-lg"></i>
           </button>
           <h3 class="text-center" style="margin-bottom: 20px">
@@ -53,7 +53,7 @@
           </div>
         </div>
         <div class="col-md-2">
-          <button class="btn btn-default btn-lg center-block" id="switchCurrencies" type="button" style="margin-bottom: 25px">
+          <button class="btn btn-default btn-lg center-block" id="switchPriceType" type="button" style="margin-bottom: 25px">
             <i class="fa fa-exchange fa-lg"></i>
           </button>
           <h3 class="text-center" style="margin-bottom: 20px">
@@ -75,18 +75,26 @@
     {{/if}}
     {{#if showMarketValue}}
       <hr>
-      <h3 class="text-center">
-        {{#if buyPrice}}
-          {{formatBaseCurrency amountSent}}
-        {{else}}
-          {{formatBaseCurrency amountReceived}}
-        {{/if}}
-        ≈ {{formatCounterCurrency marketValue}}
-        <!-- ≈ marketValue USD -->
-      </h3>
-      <p class="lead text-center">
-        <small>*according to {{marketValueProvider}}</small>
-      </p>
+      <div class="row">
+        <div class="col-md-7">
+          <h2 class="text-right" style="margin-top: 5px">
+            {{#if buyPrice}}
+              {{formatBaseCurrency amountSent}}
+            {{else}}
+              {{formatBaseCurrency amountReceived}}
+            {{/if}}
+            ≈ <strong>{{formatNumber marketValue}}</strong>*
+          </h2>
+        </div>
+        <div class="col-md-2">
+          {{> afFieldInput class='form-control input-lg' name='marketValueCurrency' value=marketValueCurrency firstOption=false options=marketValueCurrencies}}
+        </div>
+        <div class="col-md-3">
+          <p class="text-right">
+            <small>*according to {{marketValueProvider}}</small>
+          </p>
+        </div>
+      </div>
     {{/if}}
     {{#if showReceipt}}
     <hr>

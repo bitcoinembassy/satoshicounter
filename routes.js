@@ -4,9 +4,9 @@ Router.configure({
 });
 
 Router.route('/', {
-	name: 'home'
+  name: 'home'
 });
 
 Router.route('/:priceType-:baseCurrency/:counterCurrency', {
-	name: 'tradesCreate'
+  name: 'tradesCreate'
 });

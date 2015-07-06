@@ -89,6 +89,17 @@ Trades.attachSchema(new SimpleSchema({
   //   titleField: 'number',
   //   publicationName: 'tradeMember'
   // }),
+  marketValueCurrency: {
+    type: 'String',
+    allowedValues: function() {
+      return Currencies.find().map(function(currency) {
+        return currency._id;
+      });
+    },
+    autoform: {
+      type: 'select'
+    }
+  },
   memberNumber: {
     type: Number
   },
