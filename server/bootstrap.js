@@ -1,16 +1,11 @@
 Meteor.startup(function() {
   if (Members.find().count() === 0) {
-    var data = JSON.parse(Assets.getText("members.json"));
-
-    data.forEach(function (item) {
-      Members.insert(item);
+    Members.insert({
+      firstName: 'Francis',
+      lastName: 'Brunelle',
+      phoneNumber: '579-488-0793',
+      email: 'frabrunelle@gmail.com'
     });
-    // Members.insert({
-    //   firstName: 'Francis',
-    //   lastName: 'Brunelle',
-    //   phoneNumber: '579-488-0793',
-    //   email: 'frabrunelle@gmail.com'
-    // });
   }
 
   if (Currencies.find().count() === 0) {
@@ -89,7 +84,7 @@ Meteor.startup(function() {
       baseCurrency: btc,
       counterCurrency: cad,
       exchangeRateProvider: coinbase,
-      percentageFeeForBuyers: 7,
+      percentageFeeForBuyers: 6,
       percentageFeeForSellers: -3
     });
 
@@ -97,8 +92,8 @@ Meteor.startup(function() {
       baseCurrency: btc,
       counterCurrency: usd,
       exchangeRateProvider: coinbase,
-      percentageFeeForBuyers: 9,
-      percentageFeeForSellers: -5
+      percentageFeeForBuyers: 10,
+      percentageFeeForSellers: -6
     });
 
     PaymentMethods.insert({
