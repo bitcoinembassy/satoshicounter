@@ -115,11 +115,13 @@ Trades.attachSchema(new SimpleSchema({
   },
   percentageFeeForAmountReceived: {
     type: Number,
-    decimal: true
+    decimal: true,
+    defaultValue: 0
   },
   calculatedFeeForAmountReceived: {
     type: Number,
-    decimal: true
+    decimal: true,
+    defaultValue: 0
   },
   member: orion.attribute('hasOne', {}, {
     collection: Members,
