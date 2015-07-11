@@ -97,17 +97,30 @@ Trades.attachSchema(new SimpleSchema({
       });
     },
     autoform: {
-      type: 'select'
+      type: 'select',
+      options: function() {
+        return Currencies.find().map(function(currency) {
+          return {label: currency.name, value: currency._id};
+        });
+      }
     }
+  },
+  subtotal: {
+    type: Number,
+    decimal: true
   },
   flatFee: {
     type: Number,
     decimal: true
   },
-  // paymentMethodPercentageFee: {
-  //   type: Number,
-  //   decimal: true
-  // },
+  percentageFeeForAmountReceived: {
+    type: Number,
+    decimal: true
+  },
+  calculatedFeeForAmountReceived: {
+    type: Number,
+    decimal: true
+  },
   member: orion.attribute('hasOne', {}, {
     collection: Members,
     titleField: 'number',

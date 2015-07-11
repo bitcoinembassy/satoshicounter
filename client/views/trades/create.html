@@ -115,16 +115,13 @@
             {{else}}
               {{formatBaseCurrency amountReceived}}
             {{/if}}
-            @ {{formatCounterCurrency companyPrice}} {{mainCurrency}}
+            @ {{formatCounterCurrency companyPrice}}
           </p>
         </div>
         <div class="col-xs-4 col-md-4 col-lg-2">
           <p class="lead text-right">
-            {{#if buyPrice}}
-              {{formatCounterCurrency amountReceivedWithoutFees}}
-            {{else}}
-              {{formatCounterCurrency amountSentWithoutFees}}
-            {{/if}}
+            {{formatCounterCurrency subtotal}}
+            {{> afFieldInput type='hidden' name='subtotal' value=subtotal}}
           </p>
         </div>
       </div>
@@ -160,11 +157,13 @@
           <div class="col-xs-8 col-md-4 col-md-offset-2 col-lg-3 col-lg-offset-3">
             <p class="lead">
               {{percentageFeeForAmountReceived}}% {{paymentMethodNameForAmountReceived}} fee
+              {{> afFieldInput type='hidden' name='percentageFeeForAmountReceived' value=percentageFeeForAmountReceived}}
             </p>
           </div>
           <div class="col-xs-4 col-md-4 col-lg-3">
             <p class="lead text-right">
               {{formatCounterCurrency calculatedFeeForAmountReceived}}
+              {{> afFieldInput type='hidden' name='calculatedFeeForAmountReceived' value=calculatedFeeForAmountReceived}}
             </p>
           </div>
         </div>
@@ -198,15 +197,18 @@
             {{> afFieldInput name='member' type='hidden' value=member}}
           </div>
           {{#if memberNumber}}
-            <h2>
-              <strong>{{memberName}}</strong>
-            </h2>
-            <h3>
-              {{memberPhoneNumber}}
-            </h3>
-            <h3>
-              {{memberEmail}}
-            </h3>
+            <div class="row">
+              <div class="col-lg-8">
+                <p class="lead">
+                  <strong>{{memberName}}</strong>
+                </p>
+              </div>
+              <div class="col-lg-4">
+                <p class="lead text-right">
+                  Level {{memberLevel}}
+                </p>
+              </div>
+            </div>
           {{/if}}
         </div>
         <div class="col-lg-2">
@@ -241,7 +243,6 @@
           {{> afQuickField name='email'}}
         </div>
         <div class="col-lg-7">
-          <p>You agree to the following:</p>
           <ul>
             <li>I understand that transactions conducted with Satoshi Counter are intended to facilitate the sale and purchase of digital currencies.</li>
             <li>I understand that digital currency does not represent a security, stock or managed trust.</li>
@@ -254,9 +255,14 @@
             <li>I am not performing any transaction with Satoshi Counter on behalf of a third party.</li>
             <li>I agree that Satoshi Counter will send me promotional emails and text messages from time to time.</li>
           </ul>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox"> I have read this agreement and agree to the terms and conditions.
+            </label>
+          </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">Insert member</button>
+      <button type="submit" class="btn btn-primary">Submit</button>
     {{/autoForm}}
   {{/if}}
 </template>
