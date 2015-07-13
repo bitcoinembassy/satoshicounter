@@ -136,10 +136,13 @@ Meteor.startup(function() {
   ExchangeRateProviders.find().forEach(function (provider) {
     Meteor.setInterval(function() {
       ExchangeRates.find({provider: provider._id}).forEach(function (exchangeRate) {
-        var rate = HTTP.get(this + exchangeRate.endpointUrl).data[exchangeRate.jsonKey];
-        var counterCurrency = Currencies.findOne(exchangeRate.counterCurrency);
-
-        ExchangeRates.update(exchangeRate._id, {$set: {rate: parseFloat(accounting.toFixed(rate, counterCurrency.precision))}});
+        HTTP.get(this + exchangeRate.endpointUrl, function (error, result) {
+          if (!error) {
+            var rate = result.data[exchangeRate.jsonKey];
+            var counterCurrency = Currencies.findOne(exchangeRate.counterCurrency);
+            ExchangeRates.update(exchangeRate._id, {$set: {rate: parseFloat(accounting.toFixed(rate, counterCurrency.precision))}});
+          }
+        });
       }, provider.baseUrl);
     }, provider.refreshInterval * 1000);
   });
