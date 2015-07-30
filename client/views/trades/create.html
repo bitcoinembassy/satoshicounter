@@ -84,22 +84,22 @@
       {{#if showMarketValue}}
         <hr>
         <div class="row">
-          <div class="col-md-7">
-            <h2 class="text-right" style="margin-top: 5px">
-              {{#if buyPrice}}
-                {{formatBaseCurrency amountSent}}
-              {{else}}
-                {{formatBaseCurrency amountReceived}}
-              {{/if}}
-              ≈ <strong>{{formatNumber marketValue}}</strong>*
-              {{> afFieldInput type='hidden' name='marketValue' value=marketValue}}
-            </h2>
+          <div class="col-md-3 col-md-offset-3">
+            <p class="lead" style="margin-top: 4px; margin-bottom: 0">
+              <strong>Market value</strong>
+            </p>
           </div>
           <div class="col-md-2">
-            {{> afFieldInput class='form-control input-lg' name='marketValueCurrency' value=marketValueCurrency firstOption=false options=marketValueCurrencies}}
+            <p class="lead text-right" style="margin-top: 4px; margin-bottom: 0">
+              {{formatNumber marketValue}}
+              {{> afFieldInput type='hidden' name='marketValue' value=marketValue}}
+            </p>
+          </div>
+          <div class="col-md-1">
+            {{> afFieldInput class='form-control' name='marketValueCurrency' value=marketValueCurrency firstOption=false options=marketValueCurrencies}}
           </div>
           <div class="col-md-3">
-            <p class="text-right">
+            <p class="text-right" style="margin-top: 4px">
               <small>*according to {{marketValueProvider}}</small>
             </p>
           </div>
