@@ -6,24 +6,24 @@
       </div>
       {{#with member}}
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-xs-6">
           <p class="lead">
             Number
           </p>
         </div>
-        <div class="col-lg-6">
+        <div class="col-xs-6">
           <p class="lead text-right">
             {{number}}
           </p>
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-xs-6">
           <p class="lead">
             Name
           </p>
         </div>
-        <div class="col-lg-6">
+        <div class="col-xs-6">
           <p class="lead text-right">
             {{firstName}} {{lastName}}
           </p>
@@ -32,12 +32,22 @@
       {{/with}}
     </div>
     <div class="col-lg-7 col-lg-offset-1">
-      <div class="page-header">
-        <h2>Receipt</h2>
-      </div>
       {{#with trade}}
         <div class="row">
-          <div class="col-lg-6">
+          <div class="col-xs-4">
+            <h2 style="margin-top: 40px">
+              Receipt
+            </h2>
+          </div>
+          <div class="col-xs-8">
+            <h4 class="text-right" style="margin-top: 50px">
+              {{formatDate createdAt}}
+            </h4>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-xs-8">
             <p class="lead">
               {{#if buyPrice}}
                 {{formatBaseCurrency amountSent}}
@@ -47,19 +57,19 @@
               @ {{formatCounterCurrency companyPrice}}
             </p>
           </div>
-          <div class="col-lg-6">
+          <div class="col-xs-4">
             <p class="lead text-right">
               {{formatCounterCurrency subtotal}}
             </p>
           </div>
         </div>
         <div class="row">
-          <div class="col-lg-6">
+          <div class="col-xs-6">
             <p class="lead">
               Flat fee
             </p>
           </div>
-          <div class="col-lg-6">
+          <div class="col-xs-6">
             <p class="lead text-right">
               {{formatCounterCurrency flatFee}}
             </p>
@@ -67,13 +77,13 @@
         </div>
         {{#if calculatedFeeForAmountReceived}}
           <div class="row">
-            <div class="col-lg-6">
+            <div class="col-xs-6">
               <p class="lead">
                 {{percentageFeeForAmountReceived}}% {{paymentMethodNameForAmountReceived}} fee
                 {{> afFieldInput type='hidden' name='percentageFeeForAmountReceived' value=percentageFeeForAmountReceived}}
               </p>
             </div>
-            <div class="col-lg-6">
+            <div class="col-xs-6">
               <p class="lead text-right">
                 {{formatCounterCurrency calculatedFeeForAmountReceived}}
                 {{> afFieldInput type='hidden' name='calculatedFeeForAmountReceived' value=calculatedFeeForAmountReceived}}
@@ -82,12 +92,12 @@
           </div>
         {{/if}}
         <div class="row">
-          <div class="col-lg-6">
+          <div class="col-xs-6">
             <h3>
               <strong>Total</strong>
             </h3>
           </div>
-          <div class="col-lg-6">
+          <div class="col-xs-6">
             <h3 class="text-right">
               <strong>
                 {{#if buyPrice}}
