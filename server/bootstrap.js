@@ -1,6 +1,7 @@
 Meteor.startup(function() {
   if (Members.find().count() === 0) {
     Members.insert({
+      number: 1000,
       firstName: 'Francis',
       lastName: 'Brunelle',
       phoneNumber: '579-488-0793',
