@@ -521,9 +521,7 @@ Template.tradesCreate.events({
       Session.set('member', undefined);
     } else {
       Meteor.call('findMemberByName', memberNumber, function (error, result) {
-        if (error) {
-          Session.set('memberNumber', undefined);
-        } else {
+        if (!error) {
           Session.set('memberNumber', result.number);
           Session.set('memberName', result.firstName + ' ' + result.lastName);
           Session.set('memberLevel', result.level);
@@ -550,6 +548,8 @@ Template.tradesCreate.events({
 AutoForm.hooks({
   insertTradeForm: {
     onSuccess: function (formType, result) {
+      Session.set('memberNumber', undefined);
+      Session.set('member', undefined);
       Router.go('/trades/' + result);
     }
   },
