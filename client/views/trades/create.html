@@ -227,6 +227,10 @@
           <div class="form-group form-group-lg">
             <button type="submit" class="btn btn-primary btn-lg btn-block">Insert trade</button>
           </div>
+          {{else}}
+          <div class="form-group form-group-lg">
+            <input class="form-control" type="text" placeholder="{{employee}}" readonly>
+          </div>
           {{/if}}
         </div>
       </div>

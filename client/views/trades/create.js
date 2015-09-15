@@ -252,6 +252,9 @@ Template.tradesCreate.helpers({
   },
   newMemberNumber: function () {
     return Session.get('newMemberNumber');
+  },
+  employee: function () {
+    return Meteor.user().profile.name
   }
 });
 
