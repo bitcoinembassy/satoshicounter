@@ -5,18 +5,16 @@
 # but you can also edit it by hand.
 
 meteor-platform
+iron:router
 orionjs:core
+orionjs:bootstrap
 twbs:bootstrap
 fortawesome:fontawesome
-orionjs:bootstrap
 orionjs:relationships
-iron:router
 accounts-password
+reywood:publish-composite
+momentjs:moment
 http
 risul:accounting
-momentjs:moment
 ongoworks:speakingurl
-meteortoys:allthings
-reywood:publish-composite
 nicolaslopezj:excel-export
-nicolaslopezj:orion-exporter
