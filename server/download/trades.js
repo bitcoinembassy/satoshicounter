@@ -1,23 +1,9 @@
 Router.route('/download-trades', function() {
-  var data = Trades.find().fetch();
+  var data = Trades.find({}, {sort: {createdAt: -1}}).fetch();
   var fields = [
     {
       key: 'priceType',
       title: 'Price type'
-    },
-    {
-      key: 'baseCurrency',
-      title: 'Base currency',
-      transform: function (val) {
-        return Currencies.findOne(val).code;
-      }
-    },
-    {
-      key: 'counterCurrency',
-      title: 'Counter currency',
-      transform: function (val) {
-        return Currencies.findOne(val).code;
-      }
     },
     {
       key: 'exchangeRateProvider',
@@ -70,7 +56,9 @@ Router.route('/download-trades', function() {
       key: 'paymentMethodForAmountReceived',
       title: 'Payment method',
       transform: function (val) {
-        return PaymentMethods.findOne(val).name;
+        var paymentMethod = PaymentMethods.findOne(val);
+        var currency = Currencies.findOne(paymentMethod.currency);
+        return paymentMethod.name + ' (' + currency.code + ')';
       }
     },
     {
@@ -82,29 +70,31 @@ Router.route('/download-trades', function() {
       key: 'paymentMethodForAmountSent',
       title: 'Payment method',
       transform: function (val) {
-        return PaymentMethods.findOne(val).name;
+        var paymentMethod = PaymentMethods.findOne(val);
+        var currency = Currencies.findOne(paymentMethod.currency);
+        return paymentMethod.name + ' (' + currency.code + ')';
       }
     },
-    {
-      key: 'marketValue',
-      title: 'Market value',
-      type: 'number'
-    },
-    {
-      key: 'marketValueCurrency',
-      title: 'Market value currency',
-      transform: function (val) {
-        return Currencies.findOne(val).code;
-      }
-    },
-    {
-      key: 'member',
-      title: 'Member number',
-      type: 'number',
-      transform: function (val) {
-        return Members.findOne(val).number;
-      }
-    },
+    // {
+    //   key: 'marketValue',
+    //   title: 'Market value',
+    //   type: 'number'
+    // },
+    // {
+    //   key: 'marketValueCurrency',
+    //   title: 'Market value currency',
+    //   transform: function (val) {
+    //     return Currencies.findOne(val).code;
+    //   }
+    // },
+    // {
+    //   key: 'member',
+    //   title: 'Member number',
+    //   type: 'number',
+    //   transform: function (val) {
+    //     return Members.findOne(val).number;
+    //   }
+    // },
     {
       key: 'createdBy',
       title: 'Employee',

@@ -225,7 +225,12 @@
         <div class="col-lg-5">
           {{#if memberNumber}}
           <div class="form-group form-group-lg">
-            <button type="submit" class="btn btn-primary btn-lg btn-block">Insert trade</button>
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='transactionIdForAmountReceived' class='form-control' placeholder='Envelope'}}
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">Insert trade</button>
+              </span>
+            </div>
           </div>
           {{else}}
           <div class="form-group form-group-lg">
