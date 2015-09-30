@@ -4,6 +4,8 @@ Meteor.startup(function () {
   Meteor.subscribe('exchangeRates');
   Meteor.subscribe('paymentMethods');
 
+  Meteor.subscribe('members');
+
   AutoForm.debug();
 
   moment.locale('en', {
