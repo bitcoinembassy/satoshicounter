@@ -5,13 +5,13 @@ Router.route('/download-trades', function() {
       key: 'priceType',
       title: 'Price type'
     },
-    {
-      key: 'exchangeRateProvider',
-      title: 'Exchange rate provider',
-      transform: function (val) {
-        return ExchangeRateProviders.findOne(val).name;
-      }
-    },
+    // {
+    //   key: 'exchangeRateProvider',
+    //   title: 'Exchange rate provider',
+    //   transform: function (val) {
+    //     return ExchangeRateProviders.findOne(val).name;
+    //   }
+    // },
     {
       key: 'exchangeRate',
       title: 'Exchange rate',
@@ -75,26 +75,26 @@ Router.route('/download-trades', function() {
         return paymentMethod.name + ' (' + currency.code + ')';
       }
     },
-    // {
-    //   key: 'marketValue',
-    //   title: 'Market value',
-    //   type: 'number'
-    // },
-    // {
-    //   key: 'marketValueCurrency',
-    //   title: 'Market value currency',
-    //   transform: function (val) {
-    //     return Currencies.findOne(val).code;
-    //   }
-    // },
-    // {
-    //   key: 'member',
-    //   title: 'Member number',
-    //   type: 'number',
-    //   transform: function (val) {
-    //     return Members.findOne(val).number;
-    //   }
-    // },
+    {
+      key: 'marketValue',
+      title: 'Market value',
+      type: 'number'
+    },
+    {
+      key: 'marketValueCurrency',
+      title: 'Market value currency',
+      transform: function (val) {
+        return Currencies.findOne(val).code;
+      }
+    },
+    {
+      key: 'member',
+      title: 'Member number',
+      type: 'number',
+      transform: function (val) {
+        return Members.findOne(val).number;
+      }
+    },
     {
       key: 'createdBy',
       title: 'Employee',
