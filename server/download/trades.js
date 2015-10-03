@@ -1,5 +1,5 @@
 Router.route('/download-trades', function() {
-  var data = Trades.find({}, {sort: {createdAt: -1}}).fetch();
+  var data = Trades.find({}, {sort: {createdAt: -1}, limit: 100}).fetch();
   var fields = [
     {
       key: 'priceType',
@@ -37,11 +37,11 @@ Router.route('/download-trades', function() {
       title: 'Flat fee',
       type: 'number'
     },
-    {
-      key: 'percentageFeeForAmountReceived',
-      title: 'Payment method fee (%)',
-      type: 'number'
-    },
+    // {
+    //   key: 'percentageFeeForAmountReceived',
+    //   title: 'Payment method fee (%)',
+    //   type: 'number'
+    // },
     {
       key: 'calculatedFeeForAmountReceived',
       title: 'Calculated fee',
@@ -75,18 +75,18 @@ Router.route('/download-trades', function() {
         return paymentMethod.name + ' (' + currency.code + ')';
       }
     },
-    {
-      key: 'marketValue',
-      title: 'Market value',
-      type: 'number'
-    },
-    {
-      key: 'marketValueCurrency',
-      title: 'Market value currency',
-      transform: function (val) {
-        return Currencies.findOne(val).code;
-      }
-    },
+    // {
+    //   key: 'marketValue',
+    //   title: 'Market value',
+    //   type: 'number'
+    // },
+    // {
+    //   key: 'marketValueCurrency',
+    //   title: 'Market value currency',
+    //   transform: function (val) {
+    //     return Currencies.findOne(val).code;
+    //   }
+    // },
     {
       key: 'member',
       title: 'Member number',
