@@ -103,6 +103,10 @@ Router.route('/download-trades', function() {
       }
     },
     {
+      key: 'transactionIdForAmountReceived',
+      title: 'Envelope'
+    },
+    {
       key: 'createdAt',
       title: 'Date',
       transform: function (val) {
