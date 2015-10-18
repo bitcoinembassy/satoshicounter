@@ -116,7 +116,7 @@
           <hr>
           {{#if currentUser}}
             <div class="text-center" style="margin-bottom: 20px">
-              {{> QrCode text=bitcoinURI size='200px'}}
+              {{> qrcode size=200 text=bitcoinURI}}
             </div>
           {{/if}}
           <p class="lead text-center" style="margin-bottom: 0">
@@ -172,4 +172,8 @@
       </div>
     </div>
   {{/if}}
+</template>
+
+<template name="qrcode">
+  <div class="qrcode"></div>
 </template>

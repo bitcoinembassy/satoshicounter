@@ -63,3 +63,10 @@ AutoForm.hooks({
     }
   }
 });
+
+Template.qrcode.onRendered(function () {
+  this.$('div.qrcode').qrcode({
+    size: this.data.size,
+    text: this.data.text
+  });
+});

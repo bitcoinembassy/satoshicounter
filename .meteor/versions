@@ -28,6 +28,7 @@ ddp-rate-limiter@1.0.0
 ddp-server@1.2.1
 deps@1.0.9
 diff-sequence@1.0.1
+dschulz:jquery-qrcode@1.0.2
 ecmascript@0.1.5
 ecmascript-collections@0.1.6
 ejson@1.0.7
@@ -53,7 +54,6 @@ iron:url@1.0.11
 jeremy:selectize@0.12.1_4
 jjman505:bitcoin-address@0.1.0
 jquery@1.11.4
-khrone:img-qrcode@0.1.1
 lai:collection-extensions@0.1.4
 launch-screen@1.0.4
 less@2.5.0_3
@@ -129,7 +129,6 @@ spacebars@1.0.7
 spacebars-compiler@1.0.7
 srp@1.0.4
 standard-minifiers@1.0.1
-steeve:jquery-qrcode@0.2.2
 templating@1.1.4
 templating-tools@1.0.0
 tracker@1.0.9
