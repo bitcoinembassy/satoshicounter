@@ -48,3 +48,10 @@ Template.tradesShow.helpers({
     return "bitcoin:" + Session.get('bitcoinAddressForAmountSent') + "?amount=" + Session.get('amountSent') + "&label=" + Session.get('tradeId');
   }
 });
+
+qrScanner.on('scan', function(err, message) {
+  if (message != null) {
+    $('#scanAddress').modal('hide')
+    $('input[name=bitcoinAddressForAmountSent]').val(message);
+  }
+});
