@@ -55,3 +55,11 @@ qrScanner.on('scan', function(err, message) {
     $('input[name=bitcoinAddressForAmountSent]').val(message);
   }
 });
+
+AutoForm.hooks({
+  updateTradeForm: {
+    onSuccess: function (formType, result) {
+      location.reload();
+    }
+  }
+});
