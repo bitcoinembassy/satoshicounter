@@ -15,7 +15,6 @@ reywood:publish-composite
 momentjs:moment
 http
 risul:accounting
-ongoworks:speakingurl
 nicolaslopezj:excel-export
 standard-minifiers
 meteor-base
@@ -31,3 +30,6 @@ random
 ejson
 spacebars
 check
+ongoworks:speakingurl
+khrone:img-qrcode
+meteortoys:allthings

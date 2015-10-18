@@ -148,6 +148,11 @@ Trades.attachSchema(new SimpleSchema({
     label: 'Transaction ID (for amount sent)',
     optional: true
   },
+  bitcoinAddressForAmountSent: {
+    type: String,
+    label: 'Bitcoin address',
+    optional: true
+  },
   notes: {
     type: String,
     optional: true,

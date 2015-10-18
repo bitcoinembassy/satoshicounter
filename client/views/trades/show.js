@@ -5,6 +5,7 @@ Template.tradesShow.onCreated(function () {
   this.autorun(function () {
     if (tradeSubscription.ready()) {
       var trade = Trades.findOne(tradeId);
+      Session.set('tradeId', trade._id);
       Session.set('member', trade.member);
       Session.set('priceType', trade.priceType);
 
@@ -18,6 +19,9 @@ Template.tradesShow.onCreated(function () {
 
       var paymentMethod = PaymentMethods.findOne(trade.paymentMethodForAmountReceived);
       Session.set('paymentMethodForAmountReceived.name', paymentMethod.name.toLowerCase());
+
+      Session.set('amountSent', trade.amountSent.toString());
+      Session.set('bitcoinAddressForAmountSent', trade.bitcoinAddressForAmountSent);
     }
   });
 });
@@ -36,5 +40,11 @@ Template.tradesShow.helpers({
   },
   paymentMethodNameForAmountReceived: function () {
     return Session.get('paymentMethodForAmountReceived.name');
+  },
+  bitcoinAddressForAmountSent: function () {
+    return Session.get('bitcoinAddressForAmountSent');
+  },
+  bitcoinURI: function () {
+    return "bitcoin:" + Session.get('bitcoinAddressForAmountSent') + "?amount=" + Session.get('amountSent') + "&label=" + Session.get('tradeId');
   }
 });

@@ -110,6 +110,22 @@
           </div>
         </div>
       {{/with}}
+      <div class="well text-center" style="margin-top: 20px">
+        {{#if bitcoinAddressForAmountSent}}
+          <h2 style="margin-top: 0">{{bitcoinAddressForAmountSent}}</h2>
+          <hr>
+          <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">
+            {{> QrCode text=bitcoinURI }}
+          </a>
+        {{else}}
+          <h2 style="margin-top: 0">Generate a QR code</h2>
+          <hr>
+          {{#autoForm collection='Trades' doc=trade id='updateTradeForm' type='update'}}
+            {{> afQuickField name='bitcoinAddressForAmountSent' placeholder="The address where you will send the bitcoins to"}}
+            <button type="submit" class="btn btn-primary">Generate</button>
+          {{/autoForm}}
+        {{/if}}
+      </div>
     </div>
   </div>
 </template>
