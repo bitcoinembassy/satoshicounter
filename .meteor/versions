@@ -51,6 +51,7 @@ iron:middleware-stack@1.0.11
 iron:router@1.0.12
 iron:url@1.0.11
 jeremy:selectize@0.12.1_4
+jjman505:bitcoin-address@0.1.0
 jquery@1.11.4
 khrone:img-qrcode@0.1.1
 lai:collection-extensions@0.1.4

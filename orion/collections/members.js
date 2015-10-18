@@ -18,7 +18,6 @@ Members.attachSchema(new SimpleSchema({
   },
   phoneNumber: {
     type: String,
-    regEx: /^\d{3}-\d{3}-\d{4}$/,
     unique: true,
     optional: true,
     autoform: {

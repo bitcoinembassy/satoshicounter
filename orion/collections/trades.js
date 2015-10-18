@@ -151,7 +151,22 @@ Trades.attachSchema(new SimpleSchema({
   bitcoinAddressForAmountSent: {
     type: String,
     label: 'Bitcoin address',
-    optional: true
+    optional: true,
+    custom: function () {
+      if (Meteor.isServer) {
+        if (this.value === undefined) {
+          return true;
+        }
+
+        if (BitcoinAddress.validate(this.value)) {
+          return true;
+        } else {
+          return 'invalid Bitcoin address'
+        }
+      } else {
+        return true;
+      }
+    }
   },
   notes: {
     type: String,
