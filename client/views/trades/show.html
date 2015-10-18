@@ -112,11 +112,21 @@
       {{/with}}
       <div class="well" style="margin-top: 20px">
         {{#if bitcoinAddressForAmountSent}}
-          <a class="text-center" href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">
-            {{> QrCode text=bitcoinURI}}
-          </a>
+          <h2 class="text-center" style="margin: 0">Receiving address</h2>
           <hr>
-          <h3 class="text-center" style="margin-top: 0">{{bitcoinAddressForAmountSent}}</h3>
+          {{#if currentUser}}
+            <div class="text-center">
+              {{> QrCode text=bitcoinURI}}
+            </div>
+            <hr>
+          {{/if}}
+          <h3 class="text-center" style="margin-top: 0">
+            {{#if currentUser}}
+              <a href="{{bitcoinURI}}">{{bitcoinAddressForAmountSent}}</a>
+            {{else}}
+              <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">{{bitcoinAddressForAmountSent}}</a>
+            {{/if}}
+          </h3>
         {{else}}
           {{#if currentUser}}
           <h2 style="margin-top: 0">Generate a QR code</h2>
