@@ -52,7 +52,8 @@ Template.tradesShow.helpers({
 qrScanner.on('scan', function(err, message) {
   if (message != null) {
     $('#scanAddress').modal('hide')
-    $('input[name=bitcoinAddressForAmountSent]').val(message);
+    var bitcoinAddress = message.replace("bitcoin:", "");
+    $('input[name=bitcoinAddressForAmountSent]').val(bitcoinAddress);
   }
 });
 
