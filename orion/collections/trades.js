@@ -153,18 +153,14 @@ Trades.attachSchema(new SimpleSchema({
     label: 'Bitcoin address',
     optional: true,
     custom: function () {
-      if (Meteor.isServer) {
-        if (this.value === undefined) {
-          return true;
-        }
-
-        if (BitcoinAddress.validate(this.value)) {
+      if (this.value === undefined || this.value === "") {
+        return true;
+      } else {
+        if (bitcore.Address.isValid(this.value)) {
           return true;
         } else {
-          return 'invalid Bitcoin address'
+          return 'required'
         }
-      } else {
-        return true;
       }
     }
   },

@@ -35,6 +35,7 @@ ejson@1.0.7
 email@1.0.7
 fastclick@1.0.7
 fortawesome:fontawesome@4.4.0
+frabrunelle:bitcore@0.13.5
 geojson-utils@1.0.4
 gwendall:body-events@0.1.6
 hitchcott:qr-scanner@1.0.0
@@ -52,7 +53,6 @@ iron:middleware-stack@1.0.11
 iron:router@1.0.12
 iron:url@1.0.11
 jeremy:selectize@0.12.1_4
-jjman505:bitcoin-address@0.1.0
 jquery@1.11.4
 lai:collection-extensions@0.1.4
 launch-screen@1.0.4
