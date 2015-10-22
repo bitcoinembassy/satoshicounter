@@ -114,17 +114,23 @@
         {{#if bitcoinAddressForAmountSent}}
           <h2 class="text-center" style="margin: 0">Receiving address</h2>
           <hr>
-          {{#if currentUser}}
-            <div class="text-center" style="margin-bottom: 20px">
-              {{> qrcode size=200 text=bitcoinURI}}
-            </div>
-          {{/if}}
-          <p class="lead text-center" style="margin-bottom: 0">
+          <p class="lead text-center">
             {{#if currentUser}}
               <a href="{{bitcoinURI}}">{{bitcoinAddressForAmountSent}}</a>
             {{else}}
               <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">{{bitcoinAddressForAmountSent}}</a>
             {{/if}}
+          </p>
+          {{#if currentUser}}
+            <div class="text-center" style="margin-bottom: 20px">
+              {{> qrcode size=200 text=bitcoinURI}}
+            </div>
+          {{/if}}
+          <p class="lead text-center">
+            <a href="https://www.blocktrail.com/BTC/address/{{bitcoinAddressForAmountSent}}">Blocktrail</a>
+          </p>
+          <p class="lead text-center">
+            <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">Blockchain.info</a>
           </p>
         {{else}}
           {{#if currentUser}}
