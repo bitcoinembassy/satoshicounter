@@ -1,8 +1,14 @@
 <template name="header">
   <div class="container">
-    <a href="/">
-      <img class="img-responsive" src="/satoshicounter_logo.png" style="padding-top: 30px">
-    </a>
+    {{#if currentUser}}
+      <a href="/">
+        <img class="img-responsive" src="/satoshicounter_logo.png" style="padding-top: 30px">
+      </a>
+    {{else}}
+      <a href="http://satoshicounter.com/">
+        <img class="img-responsive" src="/satoshicounter_logo.png" style="padding-top: 30px">
+      </a>
+    {{/if}}
   </div>
   <hr style="margin-bottom: 0">
 </template>

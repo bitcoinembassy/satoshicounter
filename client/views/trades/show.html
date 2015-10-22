@@ -112,26 +112,31 @@
       {{/with}}
       <div class="well" style="margin-top: 20px">
         {{#if bitcoinAddressForAmountSent}}
-          <h2 class="text-center" style="margin: 0">Receiving address</h2>
-          <hr>
-          <p class="lead text-center">
-            {{#if currentUser}}
+          {{#if currentUser}}
+            <h2 class="text-center" style="margin: 0">
               <a href="{{bitcoinURI}}">{{bitcoinAddressForAmountSent}}</a>
-            {{else}}
-              <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">{{bitcoinAddressForAmountSent}}</a>
-            {{/if}}
-          </p>
+            </h2>
+          {{else}}
+            <h2 class="text-center" style="margin: 0">
+              The bitcoins have been sent
+            </h2>
+          {{/if}}
+          <hr>
           {{#if currentUser}}
             <div class="text-center" style="margin-bottom: 20px">
               {{> qrcode size=200 text=bitcoinURI}}
             </div>
+            <p class="lead text-center">
+              <a href="https://www.blocktrail.com/BTC/address/{{bitcoinAddressForAmountSent}}">Blocktrail</a>
+            </p>
+            <p class="lead text-center">
+              <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">Blockchain.info</a>
+            </p>
+          {{else}}
+            <p class="lead text-center">
+              <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">Click here</a> to view your transaction on the blockchain.
+            </p>
           {{/if}}
-          <p class="lead text-center">
-            <a href="https://www.blocktrail.com/BTC/address/{{bitcoinAddressForAmountSent}}">Blocktrail</a>
-          </p>
-          <p class="lead text-center">
-            <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">Blockchain.info</a>
-          </p>
         {{else}}
           {{#if currentUser}}
           <h2 style="margin-top: 0">Generate a QR code</h2>
