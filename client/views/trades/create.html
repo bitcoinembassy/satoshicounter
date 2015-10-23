@@ -81,6 +81,72 @@
           </div>
         </div>
       {{/if}}
+    {{/unless}}
+    {{#if currentUser}}
+      <div class="row">
+        <div class="col-lg-5">
+          {{#unless showMemberForm}}
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='member'}}has-error{{/if}}">
+            <input class="form-control input-lg" name="memberNumber" type="number" value="{{memberNumber}}" placeholder="What is your member number?">
+            {{> afFieldInput name='member' type='hidden' value=member}}
+          </div>
+          {{/unless}}
+          {{#if memberNumber}}
+          <div class="well well-sm">
+            <div class="row">
+              <div class="col-lg-8">
+                <p class="lead" style="margin: 0">
+                  <strong>{{memberName}}</strong>
+                </p>
+              </div>
+              <div class="col-lg-4">
+                <p class="lead text-right" style="margin: 0">
+                  Level {{memberLevel}}
+                </p>
+              </div>
+            </div>
+          </div>
+          {{/if}}
+        </div>
+        <div class="col-lg-2">
+          {{#unless memberNumber}}
+            <button type="button" class="btn btn-default btn-lg center-block" id="addNewMember">
+              {{#unless showMemberForm}}
+                <i class="fa fa-user-plus fa-lg"></i>
+              {{else}}
+                <i class="fa fa-user-times fa-lg"></i>
+              {{/unless}}
+            </button>
+          {{/unless}}
+        </div>
+        <div class="col-lg-5">
+          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='bitcoinAddress'}}has-error{{/if}}">
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='bitcoinAddress' class='form-control' placeholder='Bitcoin address'}}
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#scanAddress">
+                  <i class="fa fa-qrcode fa-lg"></i>
+                </button>
+              </span>
+            </div>
+            {{#if afFieldIsInvalid name='bitcoinAddress'}}
+              <span class="help-block">{{{afFieldMessage name='bitcoinAddress'}}}</span>
+            {{/if}}
+          </div>
+          {{#if memberNumber}}
+          <div class="form-group form-group-lg">
+            <div class="input-group input-group-lg">
+              {{> afFieldInput name='transactionIdForAmountReceived' class='form-control' placeholder='Envelope'}}
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary">Insert trade</button>
+              </span>
+            </div>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+    {{#unless showMemberForm}}
       {{#if showMarketValue}}
         <hr>
         <div class="row">
@@ -170,12 +236,12 @@
       {{/if}}
       <div class="row">
         <div class="col-xs-6 col-md-4 col-md-offset-2 col-lg-3 col-lg-offset-3">
-          <h3>
+          <h3 style="margin-top: 0">
             <strong>Total</strong>
           </h3>
         </div>
         <div class="col-xs-6 col-md-4 col-lg-3">
-          <h3 class="text-right">
+          <h3 class="text-right" style="margin-top: 0">
             <strong>
               {{#if buyPrice}}
                 {{formatCounterCurrency amountReceived}}
@@ -187,72 +253,7 @@
         </div>
       </div>
       {{/if}}
-      <hr>
     {{/unless}}
-    {{#if currentUser}}
-      <div class="row">
-        <div class="col-lg-5">
-          <div class="form-group form-group-lg {{#if afFieldIsInvalid name='member'}}has-error{{/if}}">
-            <input class="form-control input-lg" name="memberNumber" type="number" value="{{memberNumber}}" placeholder="What is your member number?">
-            {{> afFieldInput name='member' type='hidden' value=member}}
-          </div>
-          {{#if memberNumber}}
-            <div class="row">
-              <div class="col-lg-8">
-                <p class="lead">
-                  <strong>{{memberName}}</strong>
-                </p>
-              </div>
-              <div class="col-lg-4">
-                <p class="lead text-right">
-                  Level {{memberLevel}}
-                </p>
-              </div>
-            </div>
-          {{/if}}
-        </div>
-        <div class="col-lg-2">
-          {{#unless memberNumber}}
-            <button type="button" class="btn btn-default btn-lg center-block" id="addNewMember">
-              {{#unless showMemberForm}}
-                <i class="fa fa-user-plus fa-lg"></i>
-              {{else}}
-                <i class="fa fa-user-times fa-lg"></i>
-              {{/unless}}
-            </button>
-          {{/unless}}
-        </div>
-        <div class="col-lg-5">
-          {{#if memberNumber}}
-          <div class="form-group form-group-lg">
-            <div class="input-group input-group-lg">
-              {{> afFieldInput name='transactionIdForAmountReceived' class='form-control' placeholder='Envelope'}}
-              <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary">Insert trade</button>
-              </span>
-            </div>
-          </div>
-          {{else}}
-          <div class="form-group form-group-lg">
-            <div class="input-group input-group-lg">
-              <input class="form-control" type="text" placeholder="{{employee}}" readonly>
-              <span class="input-group-btn">
-                <a class="btn btn-default" href="/admin"><i class="fa fa-lock"></i> Admin</a>
-              </span>
-            </div>
-          </div>
-          {{/if}}
-        </div>
-      </div>
-    {{else}}
-      <div class="row">
-        <div class="col-lg-2 col-lg-offset-5">
-          <a class="btn btn-default btn-lg center-block" href="/admin">
-            <i class="fa fa-lock"></i> Admin
-          </a>
-        </div>
-      </div>
-    {{/if}}
   {{/autoForm}}
   {{#if showMemberForm}}
     {{#autoForm collection='Members' id='insertMemberForm' type='insert'}}
@@ -263,6 +264,8 @@
           {{> afQuickField name='lastName'}}
           {{> afQuickField name='phoneNumber'}}
           {{> afQuickField name='email'}}
+          {{> afQuickField name='sendSMS'}}
+          {{> afQuickField name='sendEmail'}}
         </div>
         <div class="col-lg-7">
           <ul>
@@ -286,5 +289,25 @@
       </div>
       <button type="submit" class="btn btn-primary">Submit</button>
     {{/autoForm}}
+  {{/if}}
+  {{#if currentUser}}
+    <div class="modal fade" id="scanAddress" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Scan address</h4>
+          </div>
+          <div class="modal-body">
+            <!-- {{> qrScanner w=568 h=400}} -->
+            {{#if Template.subscriptionsReady}}
+              {{#unless bitcoinAddress}}
+                {{> qrScanner}}
+              {{/unless}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
   {{/if}}
 </template>

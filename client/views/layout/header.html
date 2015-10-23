@@ -1,14 +1,28 @@
 <template name="header">
   <div class="container">
-    {{#if currentUser}}
-      <a href="/">
-        <img class="img-responsive" src="/satoshicounter_logo.png" style="padding-top: 30px">
-      </a>
-    {{else}}
-      <a href="http://satoshicounter.com/">
-        <img class="img-responsive" src="/satoshicounter_logo.png" style="padding-top: 30px">
-      </a>
-    {{/if}}
+    <div class="row" style="padding-top: 20px">
+      <div class="col-sm-6">
+        {{#if currentUser}}
+          <a href="/">
+            <img class="img-responsive" src="/satoshicounter_logo.png">
+          </a>
+        {{else}}
+          <a href="http://satoshicounter.com/">
+            <img class="img-responsive" src="/satoshicounter_logo.png">
+          </a>
+        {{/if}}
+      </div>
+      {{#if currentUser}}
+        <div class="col-sm-4 col-sm-offset-2">
+          <div class="input-group input-group-lg">
+            <input class="form-control" type="text" placeholder="{{employee}}" readonly>
+            <span class="input-group-btn">
+              <a class="btn btn-default" href="/admin"><i class="fa fa-lock"></i> Admin</a>
+            </span>
+          </div>
+        </div>
+      {{/if}}
+    </div>
   </div>
   <hr style="margin-bottom: 0">
 </template>

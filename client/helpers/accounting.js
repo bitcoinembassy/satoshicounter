@@ -7,7 +7,7 @@ Template.registerHelper('formatCounterCurrency', function (number) {
 });
 
 Template.registerHelper('formatDate', function (date) {
-  return moment(date).format("dddd, MMMM Do YYYY")
+  return moment(date).format('dddd, MMMM Do YYYY, h:mm A');
 });
 
 Template.registerHelper('formatNumber', function (number) {

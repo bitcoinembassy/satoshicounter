@@ -29,6 +29,54 @@
           </p>
         </div>
       </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <p class="lead">
+            Phone
+          </p>
+        </div>
+        <div class="col-xs-6">
+          <p class="lead text-right">
+            {{phoneNumber}}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          <p class="lead">
+            Email
+          </p>
+        </div>
+        <div class="col-xs-8">
+          <p class="lead text-right">
+            {{email}}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <p class="lead">
+            Send SMS
+          </p>
+        </div>
+        <div class="col-xs-6">
+          <p class="lead text-right">
+            {{sendSMS}}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6">
+          <p class="lead">
+            Send Email
+          </p>
+        </div>
+        <div class="col-xs-6">
+          <p class="lead text-right">
+            {{sendEmail}}
+          </p>
+        </div>
+      </div>
       {{/with}}
     </div>
     <div class="col-lg-7 col-lg-offset-1">
@@ -110,21 +158,24 @@
           </div>
         </div>
       {{/with}}
-      {{#if bitcoinAddressForAmountSent}}
+      {{#if bitcoinAddress}}
         <div class="well" style="margin-top: 20px">
           {{#if currentUser}}
             <h2 class="text-center" style="margin: 0">
-              <a href="{{bitcoinURI}}">{{bitcoinAddressForAmountSent}}</a>
+              Bitcoin address
             </h2>
             <hr>
+            <p class="lead text-center">
+              <a href="{{bitcoinURI}}">{{bitcoinAddress}}</a>
+            </p>
             <div class="text-center" style="margin-bottom: 20px">
               {{> qrcode size=200 text=bitcoinURI}}
             </div>
             <p class="lead text-center">
-              <a href="https://www.blocktrail.com/BTC/address/{{bitcoinAddressForAmountSent}}">Blocktrail</a>
+              <a href="https://www.blocktrail.com/BTC/address/{{bitcoinAddress}}">Blocktrail</a>
             </p>
             <p class="lead text-center">
-              <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">Blockchain.info</a>
+              <a href="https://blockchain.info/address/{{bitcoinAddress}}">Blockchain.info</a>
             </p>
           {{else}}
             <h2 class="text-center" style="margin: 0">
@@ -132,60 +183,25 @@
             </h2>
             <hr>
             <p class="lead text-center">
-              Here is the address you provided: <strong>{{bitcoinAddressForAmountSent}}</strong>
+              Here is the address you provided: <strong>{{bitcoinAddress}}</strong>
             </p>
             <hr>
             <p class="lead text-center">
-              <a href="https://blockchain.info/address/{{bitcoinAddressForAmountSent}}">Click here</a> to view your transaction on the blockchain.
+              <a href="https://blockchain.info/address/{{bitcoinAddress}}">Click here</a> to view your transaction on the blockchain.
             </p>
           {{/if}}
         </div>
-      {{else}}
-        {{#if currentUser}}
-          <div class="well" style="margin-top: 20px">
-            <h2 style="margin-top: 0">Generate a QR code</h2>
-            <hr>
-            {{#autoForm collection='Trades' doc=trade id='updateTradeForm' type='update'}}
-              <div class="form-group form-group-lg {{#if afFieldIsInvalid name='bitcoinAddressForAmountSent'}}has-error{{/if}}">
-                <div class="input-group input-group-lg">
-                  {{> afFieldInput name='bitcoinAddressForAmountSent' class='form-control' placeholder='The address where you will send the bitcoins to'}}
-                  <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#scanAddress">
-                      Scan address
-                    </button>
-                  </span>
-                </div>
-                {{#if afFieldIsInvalid name='bitcoinAddressForAmountSent'}}
-                  <span class="help-block">{{{afFieldMessage name='bitcoinAddressForAmountSent'}}}</span>
-                {{/if}}
-              </div>
-              <button type="submit" class="btn btn-primary">Generate</button>
-            {{/autoForm}}
-          </div>
-        {{/if}}
+      {{/if}}
+      {{#if currentUser}}
+        <div class="well">
+          <h2 class="text-center" style="margin: 0">Admin tools</h2>
+          <hr>
+          <button type="button" class="btn btn-default btn-lg btn-block" id="sendSMS">Send receipt via SMS</button>
+          <button type="button" class="btn btn-default btn-lg btn-block" id="sendEmail">Send receipt via Email</button>
+        </div>
       {{/if}}
     </div>
   </div>
-  {{#if currentUser}}
-    <div class="modal fade" id="scanAddress" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Scan address</h4>
-          </div>
-          <div class="modal-body">
-            <!-- {{> qrScanner w=568 h=400}} -->
-            {{#if Template.subscriptionsReady}}
-              {{#unless bitcoinAddressForAmountSent}}
-                {{> qrScanner}}
-              {{/unless}}
-            {{/if}}
-          </div>
-        </div>
-      </div>
-    </div>
-  {{/if}}
 </template>
 
 <template name="qrcode">

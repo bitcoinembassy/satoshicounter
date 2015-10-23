@@ -148,19 +148,14 @@ Trades.attachSchema(new SimpleSchema({
     label: 'Transaction ID (for amount sent)',
     optional: true
   },
-  bitcoinAddressForAmountSent: {
+  bitcoinAddress: {
     type: String,
     label: 'Bitcoin address',
-    optional: true,
     custom: function () {
-      if (this.value === undefined || this.value === "") {
+      if (bitcore.Address.isValid(this.value)) {
         return true;
       } else {
-        if (bitcore.Address.isValid(this.value)) {
-          return true;
-        } else {
-          return 'required'
-        }
+        return 'required'
       }
     }
   },

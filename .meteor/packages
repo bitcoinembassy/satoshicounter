@@ -35,4 +35,7 @@ meteortoys:allthings
 hitchcott:qr-scanner
 dschulz:jquery-qrcode
 frabrunelle:bitcore
-alanning:twilio
+dispatch:twilio
+emgee:libphonenumber
+idmontie:migrations
+email

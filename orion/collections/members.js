@@ -58,5 +58,14 @@ Members.attachSchema(new SimpleSchema({
       rows: 5
     }
   },
+  sendSMS: {
+    type: Boolean,
+    defaultValue: false,
+    label: 'Send SMS'
+  },
+  sendEmail: {
+    type: Boolean,
+    defaultValue: false
+  },
   createdAt: orion.attribute('createdAt')
 }));

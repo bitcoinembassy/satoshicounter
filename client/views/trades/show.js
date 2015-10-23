@@ -20,8 +20,10 @@ Template.tradesShow.onCreated(function () {
       var paymentMethod = PaymentMethods.findOne(trade.paymentMethodForAmountReceived);
       Session.set('paymentMethodForAmountReceived.name', paymentMethod.name.toLowerCase());
 
+      Session.set('bitcoinAddress', trade.bitcoinAddress);
+
       Session.set('amountSent', trade.amountSent.toString());
-      Session.set('bitcoinAddressForAmountSent', trade.bitcoinAddressForAmountSent);
+      Session.set('amountReceived', trade.amountReceived.toString());
     }
   });
 });
@@ -41,27 +43,51 @@ Template.tradesShow.helpers({
   paymentMethodNameForAmountReceived: function () {
     return Session.get('paymentMethodForAmountReceived.name');
   },
-  bitcoinAddressForAmountSent: function () {
-    return Session.get('bitcoinAddressForAmountSent');
+  bitcoinAddress: function () {
+    return Session.get('bitcoinAddress');
   },
   bitcoinURI: function () {
-    return "bitcoin:" + Session.get('bitcoinAddressForAmountSent') + "?amount=" + Session.get('amountSent') + "&label=" + Session.get('tradeId');
-  }
-});
-
-qrScanner.on('scan', function(err, message) {
-  if (message != null) {
-    $('#scanAddress').modal('hide')
-    var bitcoinAddress = message.replace("bitcoin:", "");
-    $('input[name=bitcoinAddressForAmountSent]').val(bitcoinAddress);
-  }
-});
-
-AutoForm.hooks({
-  updateTradeForm: {
-    onSuccess: function (formType, result) {
-      location.reload();
+    var amount;
+    if (Session.equals('priceType', 'buy')) {
+      amount = Session.get('amountSent');
+    } else {
+      amount = Session.get('amountReceived');
     }
+
+    return "bitcoin:" + Session.get('bitcoinAddress') + "?amount=" + amount + "&label=" + Session.get('tradeId');
+  }
+});
+
+Template.tradesShow.events({
+  'click #sendSMS': function () {
+    $('#sendSMS').attr('disabled', 'disabled');
+    Meteor.call('sendSMS', Session.get('tradeId'), function (error) {
+      if (error) {
+        $('#sendSMS').toggleClass('btn-default btn-danger');
+        $('#sendSMS').removeAttr('disabled');
+        console.log(error.reason);
+        console.log(error.details);
+      } else {
+        $('#sendSMS').toggleClass('btn-default btn-success');
+        $('#sendSMS').removeAttr('disabled');
+        console.log("The SMS was successfully sent.")
+      }
+    });
+  },
+  'click #sendEmail': function () {
+    $('#sendEmail').attr('disabled', 'disabled');
+    Meteor.call('sendEmail', Session.get('tradeId'), function (error) {
+      if (error) {
+        $('#sendEmail').toggleClass('btn-default btn-danger');
+        $('#sendEmail').removeAttr('disabled');
+        console.log(error.reason);
+        console.log(error.details);
+      } else {
+        $('#sendEmail').toggleClass('btn-default btn-success');
+        $('#sendEmail').removeAttr('disabled');
+        console.log("The Email was successfully sent.")
+      }
+    });
   }
 });
 

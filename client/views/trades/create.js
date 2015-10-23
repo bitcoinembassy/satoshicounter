@@ -252,9 +252,6 @@ Template.tradesCreate.helpers({
   },
   newMemberNumber: function () {
     return Session.get('newMemberNumber');
-  },
-  employee: function () {
-    return Meteor.user().profile.name
   }
 });
 
@@ -566,5 +563,13 @@ AutoForm.hooks({
         Session.set('memberLevel', result.level);
       });
     }
+  }
+});
+
+qrScanner.on('scan', function(err, message) {
+  if (message != null) {
+    $('#scanAddress').modal('hide')
+    var bitcoinAddress = message.replace("bitcoin:", "");
+    $('input[name=bitcoinAddress]').val(bitcoinAddress);
   }
 });
