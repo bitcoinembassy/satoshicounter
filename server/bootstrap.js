@@ -1,6 +1,4 @@
 Meteor.startup(function() {
-  process.env.MAIL_URL = "smtp://postmaster@satoshicounter.com:9e790b1ea598249eb83e05712db97950@smtp.mailgun.org:587";
-
   if (Members.find().count() === 0) {
     Members.insert({
       number: 1000,
