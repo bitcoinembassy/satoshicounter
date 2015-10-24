@@ -1,7 +1,7 @@
 <template name="header">
   <div class="container">
     <div class="row" style="padding-top: 20px">
-      <div class="col-sm-6">
+      <div class="col-sm-8 col-sm-offset-2">
         {{#if currentUser}}
           <a href="/">
             <img class="img-responsive" src="/satoshicounter_logo.png">
@@ -12,16 +12,11 @@
           </a>
         {{/if}}
       </div>
-      {{#if currentUser}}
-        <div class="col-sm-4 col-sm-offset-2">
-          <div class="input-group input-group-lg">
-            <input class="form-control" type="text" placeholder="{{employee}}" readonly>
-            <span class="input-group-btn">
-              <a class="btn btn-default" href="/admin"><i class="fa fa-lock"></i> Admin</a>
-            </span>
-          </div>
-        </div>
-      {{/if}}
+      <div class="col-sm-2">
+        <a class="btn btn-default btn-lg pull-right" href="/admin">
+          <i class="fa fa-lock"></i> {{employee}}
+        </a>
+      </div>
     </div>
   </div>
   <hr style="margin-bottom: 0">

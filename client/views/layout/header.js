@@ -1,5 +1,6 @@
 Template.header.helpers({
   employee: function () {
-    return Meteor.user().profile.name
+    var fullName = Meteor.user().profile.name.split(' ');
+    return fullName[0];
   }
 });
