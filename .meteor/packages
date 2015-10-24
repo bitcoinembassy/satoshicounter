@@ -36,6 +36,6 @@ hitchcott:qr-scanner
 dschulz:jquery-qrcode
 frabrunelle:bitcore
 dispatch:twilio
-emgee:libphonenumber
 idmontie:migrations
 email
+emgee:libphonenumber
