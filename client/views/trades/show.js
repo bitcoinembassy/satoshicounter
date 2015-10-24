@@ -37,6 +37,18 @@ Template.tradesShow.helpers({
   member: function () {
     return Members.findOne(Session.get('member'));
   },
+  // employee: function () {
+  //   var member = Members.findOne(Session.get('member'));
+  //   console.log(member)
+  //   if (member) {
+  //     console.log(member.createdBy)
+  //     var employee = Meteor.users.findOne(member.createdBy);
+  //     console.log(employee)
+  //     if (employee) {
+  //       return employee.profile.name;
+  //     }
+  //   }
+  // },
   trade: function () {
     return Trades.findOne(Router.current().params._id);
   },

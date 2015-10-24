@@ -5,54 +5,35 @@
         <h2>Member profile</h2>
       </div>
       {{#with member}}
-      <div class="row">
-        <div class="col-xs-6">
-          <p class="lead">
-            Number
-          </p>
-        </div>
-        <div class="col-xs-6">
-          <p class="lead text-right">
-            {{number}}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-6">
-          <p class="lead">
-            Name
-          </p>
-        </div>
-        <div class="col-xs-6">
-          <p class="lead text-right">
-            {{firstName}} {{lastName}}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-6">
-          <p class="lead">
-            Phone
-          </p>
-        </div>
-        <div class="col-xs-6">
-          <p class="lead text-right">
-            {{phoneNumber}}
-          </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-4">
-          <p class="lead" style="margin-bottom: 10px">
-            Email
-          </p>
-        </div>
-        <div class="col-xs-8">
-          <p class="lead text-right" style="margin-bottom: 10px">
-            {{email}}
-          </p>
-        </div>
-      </div>
+      <p class="lead" style="margin-bottom: 10px">
+        <strong>Member number:</strong>
+        <br>
+        {{number}}
+      </p>
+      <p class="lead" style="margin-bottom: 10px">
+        <strong>Name:</strong>
+        <br>
+        {{firstName}} {{lastName}}
+      </p>
+      {{#if currentUser}}
+      <hr>
+      <p class="lead" style="margin-bottom: 10px">
+        <strong>Phone number:</strong>
+        <br>
+        {{phoneNumber}}
+      </p>
+      <p class="lead" style="margin-bottom: 10px">
+        <strong>Email:</strong>
+        <br>
+        {{email}}
+      </p>
+      <!-- <hr>
+      <p class="lead" style="margin-bottom: 10px">
+        <strong>Employee:</strong>
+        <br>
+        {{employee}}
+      </p> -->
+      {{/if}}
       {{/with}}
     </div>
     <div class="col-lg-7 col-lg-offset-1">
