@@ -144,20 +144,34 @@
       {{/if}}
       {{#if currentUser}}
         <div class="well">
-          <h2 class="text-center" style="margin: 0">Admin tools</h2>
-          <hr>
           {{#with member}}
           <div class="well">
             <p class="lead">
-              Okay to send receipt via SMS? {{sendSMS}}
+              <strong>Okay to send receipt via SMS:</strong>
+              <br>
+              {{#if sendSMS}}
+              Yes
+              {{else}}
+              No
+              {{/if}}
             </p>
             <p class="lead" style="margin-bottom: 0">
-              Okay to send receipt via email? {{sendEmail}}
+              <strong>Okay to send receipt via email:</strong>
+              <br>
+              {{#if sendEmail}}
+              Yes
+              {{else}}
+              No
+              {{/if}}
             </p>
           </div>
           {{/with}}
-          <button type="button" class="btn btn-default btn-lg btn-block" id="sendSMS">Send receipt via SMS</button>
-          <button type="button" class="btn btn-default btn-lg btn-block" id="sendEmail">Send receipt via Email</button>
+          <button type="button" class="btn btn-default btn-lg btn-block" id="sendSMS">
+            Send receipt via SMS
+          </button>
+          <button type="button" class="btn btn-default btn-lg btn-block" id="sendEmail">
+            Send receipt via Email
+          </button>
         </div>
       {{/if}}
     </div>
