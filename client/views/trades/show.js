@@ -28,6 +28,11 @@ Template.tradesShow.onCreated(function () {
   });
 });
 
+Template.tradesShow.onDestroyed(function () {
+  Session.set('amountSent', null);
+  Session.set('amountReceived', null);
+});
+
 Template.tradesShow.helpers({
   member: function () {
     return Members.findOne(Session.get('member'));
