@@ -64,7 +64,8 @@ Template.tradesCreate.onRendered(function () {
     Session.set('modalShown', true);
     qrScanner.on('scan', function(err, message) {
       if (message != null) {
-        $('#scanAddress').modal('hide')
+        qrScanner.stopCapture();
+        $('#scanAddress').modal('hide');
         var bitcoinAddress = message.replace("bitcoin:", "");
         $('input[name=bitcoinAddress]').val(bitcoinAddress);
       }

@@ -1,1 +1,1 @@
-EmployeeRole = new Roles.Role('employee');
+// EmployeeRole = new Roles.Role('employee');
