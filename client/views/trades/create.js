@@ -61,6 +61,7 @@ Template.tradesCreate.onCreated(function () {
 
 Template.tradesCreate.onRendered(function () {
   $('#scanAddress').on('shown.bs.modal', function () {
+    Session.set('modalShown', true);
     qrScanner.on('scan', function(err, message) {
       if (message != null) {
         $('#scanAddress').modal('hide')
@@ -68,6 +69,10 @@ Template.tradesCreate.onRendered(function () {
         $('input[name=bitcoinAddress]').val(bitcoinAddress);
       }
     });
+  });
+
+  $('#scanAddress').on('hidden.bs.modal', function () {
+    Session.set('modalShown', false);
   });
 });
 
@@ -264,6 +269,9 @@ Template.tradesCreate.helpers({
   },
   newMemberNumber: function () {
     return Session.get('newMemberNumber');
+  },
+  modalShown: function () {
+    return Session.get('modalShown');
   }
 });
 

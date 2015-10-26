@@ -299,11 +299,8 @@
             <h4 class="modal-title">Scan address</h4>
           </div>
           <div class="modal-body">
-            <!-- {{> qrScanner w=568 h=400}} -->
-            {{#if Template.subscriptionsReady}}
-              {{#unless bitcoinAddress}}
-                {{> qrScanner}}
-              {{/unless}}
+            {{#if modalShown}}
+              {{> qrScanner}}
             {{/if}}
           </div>
         </div>
