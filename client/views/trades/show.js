@@ -25,11 +25,16 @@ Template.tradesShow.onCreated(function () {
       Session.set('amountSent', trade.amountSent);
       Session.set('amountReceived', trade.amountReceived);
 
+      var amount;
+
       if (trade.priceType === 'buy') {
-        Session.set('amount', trade.amountSent.toString());
+        amount = trade.amountSent.toString();
       } else {
-        Session.set('amount', trade.amountReceived.toString());
+        amount = trade.amountReceived.toString();
       }
+
+      var bitcoinURI = "bitcoin:" + trade.bitcoinAddress + "?amount=" + amount + "&label=" + tradeId;
+      Session.set('bitcoinURI', bitcoinURI);
     }
   });
 });
@@ -37,6 +42,8 @@ Template.tradesShow.onCreated(function () {
 Template.tradesShow.onDestroyed(function () {
   Session.set('amountSent', null);
   Session.set('amountReceived', null);
+
+  Session.set('bitcoinURI', undefined);
 });
 
 Template.tradesShow.helpers({
@@ -70,7 +77,7 @@ Template.tradesShow.helpers({
     return Session.get('bitcoinAddress');
   },
   bitcoinURI: function () {
-    return "bitcoin:" + Session.get('bitcoinAddress') + "?amount=" + Session.get('amount') + "&label=" + Session.get('tradeId');
+    return Session.get('bitcoinURI');
   }
 });
 
@@ -108,8 +115,13 @@ Template.tradesShow.events({
 });
 
 Template.qrcode.onRendered(function () {
-  this.$('div.qrcode').qrcode({
-    size: this.data.size,
-    text: this.data.text
+  this.autorun(function () {
+    var data = Template.currentData();
+
+    $('div.qrcode').empty();
+    $('div.qrcode').qrcode({
+      size: data.size,
+      text: data.text
+    });
   });
 });
