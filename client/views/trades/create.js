@@ -93,6 +93,9 @@ Template.tradesCreate.onDestroyed(function () {
   Session.set('marketPrice', undefined);
   Session.set('marketPriceCurrency', undefined);
   Session.set('marketPriceProvider', undefined);
+
+  Session.set('memberNumber', undefined);
+  Session.set('member', undefined);
 });
 
 Template.tradesCreate.helpers({
@@ -569,10 +572,7 @@ Template.tradesCreate.events({
 AutoForm.hooks({
   insertTradeForm: {
     onSuccess: function (formType, result) {
-      Session.set('memberNumber', undefined);
-      Session.set('member', undefined);
       Router.go('/trades/' + result);
-      location.reload();
     }
   },
   insertMemberForm: {

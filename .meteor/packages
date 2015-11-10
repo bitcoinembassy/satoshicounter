@@ -34,8 +34,8 @@ ongoworks:speakingurl
 meteortoys:allthings
 hitchcott:qr-scanner
 dschulz:jquery-qrcode
-frabrunelle:bitcore
 dispatch:twilio
 idmontie:migrations
 email
 emgee:libphonenumber
+frabrunelle:bitcore-lib
