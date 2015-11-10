@@ -22,8 +22,14 @@ Template.tradesShow.onCreated(function () {
 
       Session.set('bitcoinAddress', trade.bitcoinAddress);
 
-      Session.set('amountSent', trade.amountSent.toString());
-      Session.set('amountReceived', trade.amountReceived.toString());
+      Session.set('amountSent', trade.amountSent);
+      Session.set('amountReceived', trade.amountReceived);
+
+      if (trade.priceType === 'buy') {
+        Session.set('amount', trade.amountSent.toString());
+      } else {
+        Session.set('amount', trade.amountReceived.toString());
+      }
     }
   });
 });
@@ -64,14 +70,7 @@ Template.tradesShow.helpers({
     return Session.get('bitcoinAddress');
   },
   bitcoinURI: function () {
-    var amount;
-    if (Session.equals('priceType', 'buy')) {
-      amount = Session.get('amountSent');
-    } else {
-      amount = Session.get('amountReceived');
-    }
-
-    return "bitcoin:" + Session.get('bitcoinAddress') + "?amount=" + amount + "&label=" + Session.get('tradeId');
+    return "bitcoin:" + Session.get('bitcoinAddress') + "?amount=" + Session.get('amount') + "&label=" + Session.get('tradeId');
   }
 });
 
