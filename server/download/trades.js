@@ -32,6 +32,11 @@ Router.route('/download-trades', function() {
       title: 'Subtotal',
       type: 'number'
     },
+    // {
+    //   key: 'calculatedFeeForAmountReceived',
+    //   title: 'Payment method fee (%)',
+    //   type: 'number'
+    // },
     {
       key: 'flatFee',
       title: 'Flat fee',
@@ -43,11 +48,6 @@ Router.route('/download-trades', function() {
     //   type: 'number'
     // },
     {
-      key: 'calculatedFeeForAmountReceived',
-      title: 'Calculated fee',
-      type: 'number'
-    },
-    {
       key: 'amountReceived',
       title: 'Amount received',
       type: 'number'
@@ -57,8 +57,11 @@ Router.route('/download-trades', function() {
       title: 'Payment method',
       transform: function (val) {
         var paymentMethod = PaymentMethods.findOne(val);
-        var currency = Currencies.findOne(paymentMethod.currency);
-        return paymentMethod.name + ' (' + currency.code + ')';
+        // var currency = Currencies.findOne(paymentMethod.currency);
+        // return paymentMethod.name + ' (' + currency.code + ')';
+        if (paymentMethod) {
+          return paymentMethod.name;
+        }
       }
     },
     {
@@ -71,8 +74,9 @@ Router.route('/download-trades', function() {
       title: 'Payment method',
       transform: function (val) {
         var paymentMethod = PaymentMethods.findOne(val);
-        var currency = Currencies.findOne(paymentMethod.currency);
-        return paymentMethod.name + ' (' + currency.code + ')';
+        // var currency = Currencies.findOne(paymentMethod.currency);
+        // return paymentMethod.name + ' (' + currency.code + ')';
+        return paymentMethod.name;
       }
     },
     // {
@@ -87,6 +91,10 @@ Router.route('/download-trades', function() {
     //     return Currencies.findOne(val).code;
     //   }
     // },
+    {
+      key: 'bitcoinAddress',
+      title: 'Bitcoin address'
+    },
     {
       key: 'member',
       title: 'Member number',
