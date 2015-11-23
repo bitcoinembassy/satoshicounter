@@ -33,7 +33,7 @@ Template.tradesShow.onCreated(function () {
         amount = trade.amountReceived.toString();
       }
 
-      var bitcoinURI = "bitcoin:" + trade.bitcoinAddress + "?amount=" + amount + "&message=" + tradeId;
+      var bitcoinURI = "bitcoin:" + trade.bitcoinAddress + "?amount=" + amount + "&label=" + tradeId;
       Session.set('bitcoinURI', bitcoinURI);
     }
   });

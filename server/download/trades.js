@@ -32,11 +32,11 @@ Router.route('/download-trades', function() {
       title: 'Subtotal',
       type: 'number'
     },
-    // {
-    //   key: 'calculatedFeeForAmountReceived',
-    //   title: 'Payment method fee (%)',
-    //   type: 'number'
-    // },
+    {
+      key: 'calculatedFeeForAmountReceived',
+      title: 'Payment method fee',
+      type: 'number'
+    },
     {
       key: 'flatFee',
       title: 'Flat fee',
