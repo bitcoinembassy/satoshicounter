@@ -572,7 +572,9 @@ Template.tradesCreate.events({
 AutoForm.hooks({
   insertTradeForm: {
     onSuccess: function (formType, result) {
-      Router.go('/trades/' + result);
+      Meteor.call('newTradeNotification', result, function (error, result) {
+        Router.go('/trades/' + result);
+      });
     }
   },
   insertMemberForm: {
