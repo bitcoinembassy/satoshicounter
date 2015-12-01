@@ -72,6 +72,8 @@ Meteor.methods({
       throw new Meteor.Error("not-authorized");
     }
 
+    var receiptUrl = Meteor.absoluteUrl('trades/' + tradeId);
+
     var trade = Trades.findOne(tradeId);
 
     var baseCurrency = Currencies.findOne(trade.baseCurrency);
@@ -88,7 +90,9 @@ Meteor.methods({
       to: "btcmbc8@gmail.com",
       from: "Satoshi Counter <info@satoshicounter.com>",
       subject: "[Satoshi Counter] New trade notification",
-      text: "Price type: " + trade.priceType + "\n" +
+      text: receiptUrl + "\n\n" +
+            "Trade ID: " + trade._id + "\n" +
+            "Price type: " + trade.priceType + "\n" +
             "Base currency: " + baseCurrency.code + "\n" +
             "Counter currency: " + counterCurrency.code + "\n" +
             "Exchange rate provider: " + exchangeRateProvider.name + "\n" +
