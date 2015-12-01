@@ -85,7 +85,7 @@ Meteor.methods({
     var envelope = trade.transactionIdForAmountReceived || "not specified";
 
     Email.send({
-      to: "frabrunelle@gmail.com",
+      to: "btcmbc8@gmail.com",
       from: "Satoshi Counter <info@satoshicounter.com>",
       subject: "[Satoshi Counter] New trade notification",
       text: "Price type: " + trade.priceType + "\n" +
