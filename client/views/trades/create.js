@@ -1,7 +1,7 @@
 Template.tradesCreate.onCreated(function () {
-  var priceType = Router.current().params.priceType;
-  var baseCurrencySlug = Router.current().params.baseCurrency;
-  var counterCurrencySlug = Router.current().params.counterCurrency;
+  var priceType = Router.current().params.priceType || "buy";
+  var baseCurrencySlug = Router.current().params.baseCurrency || "bitcoins";
+  var counterCurrencySlug = Router.current().params.counterCurrency || "canadian-dollars";
 
   Session.set('priceType', priceType);
   Session.setDefault('showMemberForm', false);
@@ -146,7 +146,7 @@ Template.tradesCreate.helpers({
       return paymentMethodId;
     } else {
       if (Session.equals('priceType', 'buy')) {
-        var paymentMethod = PaymentMethods.findOne({currency: Session.get('counterCurrency'), canBeUsedForReceiving: true});
+        var paymentMethod = PaymentMethods.findOne({name: "Cash", currency: Session.get('counterCurrency'), canBeUsedForReceiving: true});
       } else {
         var paymentMethod = PaymentMethods.findOne({currency: Session.get('baseCurrency'), canBeUsedForReceiving: true});
       }
@@ -174,7 +174,7 @@ Template.tradesCreate.helpers({
       if (Session.equals('priceType', 'buy')) {
         var paymentMethod = PaymentMethods.findOne({currency: Session.get('baseCurrency'), canBeUsedForSending: true});
       } else {
-        var paymentMethod = PaymentMethods.findOne({currency: Session.get('counterCurrency'), canBeUsedForSending: true});
+        var paymentMethod = PaymentMethods.findOne({name: "Cash", currency: Session.get('counterCurrency'), canBeUsedForSending: true});
       }
 
       if (paymentMethod) {

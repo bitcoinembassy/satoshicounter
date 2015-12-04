@@ -3,8 +3,8 @@ Router.configure({
   loadingTemplate: 'loading'
 });
 
-Router.route('/', {
-  name: 'home'
+Router.route('/', function () {
+  this.render('tradesCreate');
 });
 
 Router.route('/:priceType-:baseCurrency/:counterCurrency', {

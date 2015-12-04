@@ -37,7 +37,7 @@ ejson@1.0.7
 email@1.0.8
 emgee:libphonenumber@1.0.7
 fastclick@1.0.7
-fortawesome:fontawesome@4.4.0_1
+fortawesome:fontawesome@4.5.0
 frabrunelle:bitcore-lib@0.13.10
 geojson-utils@1.0.4
 gwendall:body-events@0.1.6
@@ -126,7 +126,7 @@ routepolicy@1.0.6
 service-configuration@1.0.5
 session@1.1.1
 sha@1.0.4
-softwarerero:accounts-t9n@1.1.6
+softwarerero:accounts-t9n@1.1.7
 spacebars@1.0.7
 spacebars-compiler@1.0.7
 srp@1.0.4
