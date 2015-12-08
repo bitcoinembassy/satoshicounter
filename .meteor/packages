@@ -39,3 +39,4 @@ idmontie:migrations
 email
 emgee:libphonenumber
 frabrunelle:bitcore-lib
+force-ssl

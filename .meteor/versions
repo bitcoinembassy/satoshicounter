@@ -37,6 +37,7 @@ ejson@1.0.7
 email@1.0.8
 emgee:libphonenumber@1.0.7
 fastclick@1.0.7
+force-ssl@1.0.6
 fortawesome:fontawesome@4.5.0
 frabrunelle:bitcore-lib@0.13.10
 geojson-utils@1.0.4
@@ -69,15 +70,15 @@ meteor@1.1.10
 meteor-base@1.0.1
 meteor-platform@1.2.3
 meteorhacks:inject-initial@1.0.3
-meteortoys:allthings@2.3.0
+meteortoys:allthings@2.3.1
 meteortoys:authenticate@2.1.0
 meteortoys:autopub@2.1.0
 meteortoys:blueprint@2.1.0
 meteortoys:email@2.1.0
 meteortoys:hotreload@2.1.0
 meteortoys:listen@2.1.0
-meteortoys:method@3.0.0
-meteortoys:pub@3.0.0
+meteortoys:method@3.0.2
+meteortoys:pub@3.0.2
 meteortoys:result@2.1.0
 meteortoys:shell@2.1.0
 meteortoys:status@2.1.0
