@@ -59,24 +59,6 @@ Template.tradesCreate.onCreated(function () {
   }, 5000);
 });
 
-Template.tradesCreate.onRendered(function () {
-  $('#scanAddress').on('shown.bs.modal', function () {
-    Session.set('modalShown', true);
-    qrScanner.on('scan', function(err, message) {
-      if (message != null) {
-        qrScanner.stopCapture();
-        $('#scanAddress').modal('hide');
-        var bitcoinAddress = message.replace("bitcoin:", "");
-        $('input[name=bitcoinAddress]').val(bitcoinAddress);
-      }
-    });
-  });
-
-  $('#scanAddress').on('hidden.bs.modal', function () {
-    Session.set('modalShown', false);
-  });
-});
-
 Template.tradesCreate.onDestroyed(function () {
   Session.set('amountReceived', null);
   Session.set('counterCurrency', undefined);
@@ -566,6 +548,20 @@ Template.tradesCreate.events({
   },
   'click input[type=number]': function (event) {
     $(event.target).select();
+  },
+  'click button[data-target=#scanAddress]': function (event) {
+    Session.set('modalShown', true);
+    qrScanner.on('scan', function(err, message) {
+      if (message != null) {
+        qrScanner.stopCapture();
+        $('#scanAddress').modal('hide');
+        var bitcoinAddress = message.replace("bitcoin:", "");
+        $('input[name=bitcoinAddress]').val(bitcoinAddress);
+      }
+    });
+    $('#scanAddress').on('hidden.bs.modal', function () {
+      Session.set('modalShown', false);
+    });
   }
 });
 
