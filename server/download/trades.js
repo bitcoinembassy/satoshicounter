@@ -1,5 +1,5 @@
 Router.route('/download-trades', function() {
-  var data = Trades.find({}, {sort: {createdAt: -1}, limit: 100}).fetch();
+  var data = Trades.find({}, {sort: {createdAt: -1}, limit: 500}).fetch();
   var fields = [
     {
       key: 'priceType',
